@@ -57,7 +57,12 @@ describe('Actors API', () => {
             });
     });
 
-    // it('gets one actor by specific id', () => {
-
-    // })
+    it('gets one actor by specific id', () => {
+        return request
+            .get(`/api/actors/${dannyDevito._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, dannyDevito);
+            });
+    });
 });
