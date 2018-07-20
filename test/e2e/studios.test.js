@@ -44,7 +44,6 @@ describe('Studio API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                console.log('*** studio is: ', studio);
                 assert.deepEqual(body, [studio, bmovie]);
             });
     });
