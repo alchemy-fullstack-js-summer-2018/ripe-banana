@@ -24,6 +24,7 @@ describe('Studio model', () => {
 
     it('validates that name is required', () => {
         const studio = new Studio({});
+
         const errors = getErrors(studio.validateSync(), 1);
         assert.equal(errors.name.kind, 'required');
     });
