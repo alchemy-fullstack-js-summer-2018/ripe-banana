@@ -52,9 +52,6 @@ describe('Studio API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                console.log('studio = ', studio);
-                console.log('bmovie = ', bmovie);
-                console.log('body = ', body);
                 assert.deepEqual(body, [
                     makeSimple(studio),
                     makeSimple(bmovie)

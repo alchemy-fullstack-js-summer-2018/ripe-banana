@@ -47,7 +47,7 @@ describe('Reviewer API', () => {
             });
     });
 
-    it.skip('updates a reviewer', () => {
+    it('updates a reviewer', () => {
         reviewer.name = 'Robert';
         return request 
             .put(`/api/reviewers/${reviewer._id}`)
