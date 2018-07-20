@@ -70,7 +70,7 @@ describe('Studios API', () => {
         return request
             .get(`/api/studios/${warner._id}`)
             .then(({ body }) => {
-                assert.deepEqual(body, warner);
+                assert.deepEqual(body, makeSimple(warner));
             });
     });
 });
