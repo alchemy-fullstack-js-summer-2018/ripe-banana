@@ -65,4 +65,14 @@ describe('Actors API', () => {
                 assert.deepEqual(body, dannyDevito);
             });
     });
+
+    it('updates an actor when given their id', () => {
+        dannyDevito.pob = 'Boston, MA';
+        return request
+            .put(`/api/actors/${dannyDevito._id}`)
+            .send(dannyDevito)
+            .then((({ body }) => {
+                assert.deepEqual(body, dannyDevito);
+            }));
+    });
 });
