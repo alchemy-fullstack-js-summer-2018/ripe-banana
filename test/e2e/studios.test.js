@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
-//const { checkOk } = request;
+const { checkOk } = request;
 
 describe('Studio API', () => {
 
@@ -11,7 +11,7 @@ describe('Studio API', () => {
         return request
             .post('/api/studios')
             .send(studio)
-            //.then(checkOk)
+            .then(checkOk)
             .then(({ body }) => body);
     }
 
@@ -33,5 +33,18 @@ describe('Studio API', () => {
 
     it('saves a studio', () => {
         assert.isOk(studio._id);
+    });
+
+    it('gets all studios', () => {
+        let bmovie;
+        return save({ name: 'B Movie Studio' })
+            .then(_bmovie => {
+                bmovie = _bmovie;
+                return request.get('/api/studios');  
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [bmovie, studio]);
+            });
     });
 });
