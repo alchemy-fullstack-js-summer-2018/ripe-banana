@@ -55,4 +55,14 @@ describe('Reviewers API', () => {
 
             });
     });
+
+    it('updates a reviewer', () => {
+        justinChang.name = 'Robert Thompson';
+        return request
+            .put(`/api/reviewers/${justinChang._id}`)
+            .send(justinChang)
+            .then(({ body }) => {
+                assert.deepEqual(body, justinChang);
+            });
+    });   
 });
