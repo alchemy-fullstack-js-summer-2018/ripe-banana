@@ -38,4 +38,21 @@ describe('Reviewers API', () => {
                 assert.deepEqual(body, justinChang);
             });
     });
+
+    it('gets a list of reviewers', () => {
+        let injoong;
+        return save({
+            name: 'Injoong Yoon',
+            company: 'Variety' 
+        })
+            .then(_injoong => {
+                injoong = _injoong;
+                return request.get('/api/reviewers');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [justinChang, injoong]);
+
+            });
+    });
 });
