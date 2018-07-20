@@ -7,9 +7,8 @@ describe('Reviewer Model', () => {
 
     it('validates good model', () => {
         const data = {
-            name: 'Brad Pitt',
-            dob: new Date(),
-            pob: 'Burbank' 
+            name: 'Justin Chang',
+            company: 'The Hollywood Reporter' 
         };
      
         const reviewer = new Reviewer(data);
@@ -19,10 +18,10 @@ describe('Reviewer Model', () => {
         assert.deepEqual(json, data);
     });
 
-    it('validates that name is required', () => {
+    it('validates that all fields are required', () => {
         const reviewer = new Reviewer({});
-
-        const errors = getErrors(reviewer.validateSync(), 1);
+        const errors = getErrors(reviewer.validateSync(), 2);
         assert.equal(errors.name.kind, 'required');
+        assert.equal(errors.company.kind, 'required');
     });
 });
