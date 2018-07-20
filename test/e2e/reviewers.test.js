@@ -47,6 +47,17 @@ describe('Reviewer API', () => {
             });
     });
 
+    it.skip('updates a reviewer', () => {
+        reviewer.name = 'Robert';
+        return request 
+            .put(`/api/reviewers/${reviewer._id}`)
+            .send(reviewer)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, reviewer);
+            });
+    });
+
     it('gets a reviewer by id', () => {
         return request
             .get(`/api/reviewers/${reviewer._id}`)

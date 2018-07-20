@@ -35,6 +35,14 @@ describe('Studio API', () => {
         assert.isOk(studio._id);
     });
 
+    const makeSimple = (studio) => {
+        const simple = {
+            _id: studio._id,
+            name: studio.name
+        };
+        return simple;
+    };
+
     it('gets all studios', () => {
         let bmovie;
         return save({ name: 'B Movie Studio' })
@@ -44,7 +52,13 @@ describe('Studio API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [studio, bmovie]);
+                console.log('studio = ', studio);
+                console.log('bmovie = ', bmovie);
+                console.log('body = ', body);
+                assert.deepEqual(body, [
+                    makeSimple(studio),
+                    makeSimple(bmovie)
+                ]);
             });
     });
 
