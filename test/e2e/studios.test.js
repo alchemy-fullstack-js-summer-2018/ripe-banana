@@ -26,6 +26,15 @@ describe('Studios API', () => {
         return simple;
     };
 
+    const makeWithoutVersion = (studio) => {
+        const noVersion = {
+            _id: studio._id,
+            name: studio.name,
+            address: studio.address
+        };
+        return noVersion;
+    };
+
     let warner;
 
     beforeEach(() => {
@@ -70,7 +79,7 @@ describe('Studios API', () => {
         return request
             .get(`/api/studios/${warner._id}`)
             .then(({ body }) => {
-                assert.deepEqual(body, makeSimple(warner));
+                assert.deepEqual(body, makeWithoutVersion(warner));
             });
     });
 });
