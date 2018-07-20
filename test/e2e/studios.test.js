@@ -36,5 +36,19 @@ describe('Studios API', () => {
         assert.isOk(studio._id);
     });
 
-    it('')
+    it('gets all studios', () => {
+        let netflix;
+        return save({
+            name: 'Netflix',
+            address: {
+                city: 'Los Angeles',
+                state: 'CA',
+                country: 'United States'
+            }
+        })
+            .then(data => netflix = data)
+            .then(({ body }) => {
+                assert.deepEqual(body, [studio, netflix]);
+            });
+    });
 });
