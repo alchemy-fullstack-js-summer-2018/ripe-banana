@@ -19,20 +19,60 @@ describe('Actors API', () => {
             .then(({ body }) => body);
     }
 
-    let actor;
+    let theGos;
+    let dannyDevito;
 
     beforeEach(() => {
         return save({ 
             name:'Ryan Gosling',
-            dob: new Date(),
+            dob: new Date('1980-11-12'),
             pob: 'Portland, OR'
         })
             .then(data => {
-                actor = data;
+                theGos = data;
+            });
+    });
+    beforeEach(() => {
+        return save({ 
+            name:'Danny DeVito',
+            dob: new Date('1944-11-17'),
+            pob: 'Los Angeles, CA'
+        })
+            .then(data => {
+                dannyDevito = data;
             });
     });
 
     it('saves an actor to the database', () => {
-        assert.isOk(actor._id);
+        assert.isOk(theGos._id);
+        assert.isOk(dannyDevito._id);
+    });
+
+    it('gets all actors from the db', () => {
+        return request
+            .get('/api/actors')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [theGos, dannyDevito]);
+            });
+    });
+
+    it('gets one actor by specific id', () => {
+        return request
+            .get(`/api/actors/${dannyDevito._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, dannyDevito);
+            });
+    });
+
+    it('updates an actor when given their id', () => {
+        dannyDevito.pob = 'Boston, MA';
+        return request
+            .put(`/api/actors/${dannyDevito._id}`)
+            .send(dannyDevito)
+            .then((({ body }) => {
+                assert.deepEqual(body, dannyDevito);
+            }));
     });
 });
