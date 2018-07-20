@@ -19,7 +19,7 @@ describe('Actors API', () => {
             .then(({ body }) => body);
     }
 
-    let actor;
+    let theGos;
 
     beforeEach(() => {
         return save({ 
@@ -28,11 +28,24 @@ describe('Actors API', () => {
             pob: 'Portland, OR'
         })
             .then(data => {
-                actor = data;
+                theGos = data;
             });
     });
 
     it('saves an actor to the database', () => {
-        assert.isOk(actor._id);
+        assert.isOk(theGos._id);
     });
+
+    it('gets all actors from the db', () => {
+        return request
+            .get('/api/actors')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [theGos]);
+            });
+    });
+
+    // it('gets one actor by specific id', () => {
+
+    // })
 });
