@@ -5,7 +5,7 @@ const { dropCollection } = require('./db');
 
 describe('Studio API', () => {
 
-    // beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('studios'));
 
     function save(studio) {
         return request
@@ -13,7 +13,6 @@ describe('Studio API', () => {
             .send(studio)
             //.then(checkOk)
             .then(({ body }) => body);
-
     }
 
     let studio;
