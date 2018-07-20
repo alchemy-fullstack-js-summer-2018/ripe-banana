@@ -7,7 +7,7 @@ describe('Film model', () => {
     
     it('validates a good model', () => {
         const data = {
-            title: 'Bobbys Unemployment',
+            title: 'Bobby\'s Unemployment',
             studio: Types.ObjectId(),
             released: 2018,
             cast: [{
@@ -24,11 +24,15 @@ describe('Film model', () => {
         assert.isUndefined(film.validateSync());
     });
 
-    it('validates that a title is required', () => {
+    it('validates that a title, studio, released and actor is required', () => {
         const film = new Film({});
+
         const errors = getErrors(film.validateSync(), 3);
+        
         assert.equal(errors.title.kind, 'required');
         assert.equal(errors.studio.kind, 'required');
         assert.equal(errors.released.kind, 'required');
+        // TO:DO GET ACTOR REQUIRED TO PASS
+        
     });
 });
