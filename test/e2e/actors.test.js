@@ -20,6 +20,7 @@ describe('Actors API', () => {
     }
 
     let theGos;
+    let dannyDevito;
 
     beforeEach(() => {
         return save({ 
@@ -31,9 +32,20 @@ describe('Actors API', () => {
                 theGos = data;
             });
     });
+    beforeEach(() => {
+        return save({ 
+            name:'Danny DeVito',
+            dob: new Date(),
+            pob: 'Los Angeles, CA'
+        })
+            .then(data => {
+                dannyDevito = data;
+            });
+    });
 
     it('saves an actor to the database', () => {
         assert.isOk(theGos._id);
+        assert.isOk(dannyDevito._id);
     });
 
     it('gets all actors from the db', () => {
@@ -41,7 +53,7 @@ describe('Actors API', () => {
             .get('/api/actors')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [theGos]);
+                assert.deepEqual(body, [theGos, dannyDevito]);
             });
     });
 
