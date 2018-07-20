@@ -46,7 +46,10 @@ describe('Studios API', () => {
                 country: 'United States'
             }
         })
-            .then(data => netflix = data)
+            .then(data => {
+                netflix = data;
+                return request.get('/api/studios');
+            })
             .then(({ body }) => {
                 assert.deepEqual(body, [studio, netflix]);
             });
