@@ -25,7 +25,7 @@ describe('Actors API', () => {
     beforeEach(() => {
         return save({ 
             name:'Ryan Gosling',
-            dob: new Date(),
+            dob: new Date('1980-11-12'),
             pob: 'Portland, OR'
         })
             .then(data => {
@@ -35,7 +35,7 @@ describe('Actors API', () => {
     beforeEach(() => {
         return save({ 
             name:'Danny DeVito',
-            dob: new Date(),
+            dob: new Date('1944-11-17'),
             pob: 'Los Angeles, CA'
         })
             .then(data => {
