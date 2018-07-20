@@ -18,6 +18,14 @@ describe('Studios API', () => {
             .then(({ body }) => body);
     }
 
+    const makeSimple = (studio) => {
+        const simple = {
+            _id: studio._id,
+            name: studio.name
+        };
+        return simple;
+    };
+
     let studio;
 
     beforeEach(() => {
@@ -51,7 +59,10 @@ describe('Studios API', () => {
                 return request.get('/api/studios');
             })
             .then(({ body }) => {
-                assert.deepEqual(body, [studio, netflix]);
+                assert.deepEqual(body, [
+                    makeSimple(studio),
+                    makeSimple(netflix)
+                ]);
             });
     });
 });
