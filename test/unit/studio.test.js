@@ -20,4 +20,10 @@ describe('Studio model', () => {
         assert.deepEqual(json, data);
         assert.isUndefined(studio.validateSync());
     });
+
+    it('validates that a name is required', () => {
+        const studio = new Studio({});
+        const errors = getErrors(studio.validateSync(), 1);
+        assert.equal(errors.name.kind, 'required');
+    });
 });
