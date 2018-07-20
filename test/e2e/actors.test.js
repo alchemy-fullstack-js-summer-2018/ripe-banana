@@ -53,4 +53,15 @@ describe('Actor API', () => {
                 assert.deepEqual(body, actor);
             });
     });
+
+    it('updates an actor', () => {
+        actor.name = 'Injoong';
+        return request 
+            .put(`/api/actors/${actor._id}`)
+            .send(actor)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, actor);
+            });
+    });
 });
