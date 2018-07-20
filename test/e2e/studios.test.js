@@ -48,4 +48,12 @@ describe('Studio API', () => {
                 assert.deepEqual(body, [studio, bmovie]);
             });
     });
+
+    it('gets a studio by id', () => {
+        return request
+            .get(`/api/studios/${studio._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, studio);
+            });
+    });
 });
