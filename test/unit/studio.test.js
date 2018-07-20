@@ -1,6 +1,6 @@
-const {assert } = require('chai');
-const { Types } = require('mongoose');
-// const { getErrors } = require('./helpers');
+const { assert } = require('chai');
+// const { Types } = require('mongoose');
+const { getErrors } = require('./helpers');
 const Studio = require('../../lib/models/studio');
 
 describe('Studio model', () => {
@@ -20,6 +20,12 @@ describe('Studio model', () => {
         const json = studio.toJSON();
         delete json._id;
         assert.deepEqual(json, data);
+    });
+
+    it('validates that name is required', () => {
+        const studio = new Studio({});
+        const errors = getErrors(studio.validateSync(), 1);
+        assert.equal(errors.name.kind, 'required');
     });
 });
 
