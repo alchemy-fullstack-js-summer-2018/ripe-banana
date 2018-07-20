@@ -26,7 +26,7 @@ describe('Studios API', () => {
         return simple;
     };
 
-    let studio;
+    let warner;
 
     beforeEach(() => {
         return save({
@@ -37,11 +37,11 @@ describe('Studios API', () => {
                 country: 'United States'
             }
         })
-            .then(data => studio = data);
+            .then(data => warner = data);
     });
 
     it('saves a studio to the database', () => {
-        assert.isOk(studio._id);
+        assert.isOk(warner._id);
     });
 
     it('gets all studios', () => {
@@ -60,9 +60,17 @@ describe('Studios API', () => {
             })
             .then(({ body }) => {
                 assert.deepEqual(body, [
-                    makeSimple(studio),
+                    makeSimple(warner),
                     makeSimple(netflix)
                 ]);
+            });
+    });
+
+    it('gets a studio by ID', () => {
+        return request
+            .get(`/api/studios/${warner._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, warner);
             });
     });
 });
