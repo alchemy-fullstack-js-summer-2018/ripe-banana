@@ -90,7 +90,6 @@ describe('Films API', () => {
         return request
             .get(`/api/films/${film._id}`)
             .then(({ body }) => {
-                console.log(body);
                 assert.deepEqual(body, film);
             });
     });
