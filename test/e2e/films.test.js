@@ -15,25 +15,6 @@ describe('Films API', () => {
             .then(({ body }) => body);
     }
 
-    let film;
-
-    beforeEach(() => {
-        return save({
-            title: 'Injoong Strikes Back',
-            studio: studio2._id,
-            released: 2018,
-            cast: [{
-                role: 'Mr. Yoon',
-                actor: actor._id
-            }]
-            
-        })
-            .then(data => {
-                film = data;
-                console.log('****', data);
-            });
-    });
-
     let studio2;
     beforeEach(() => {
         return request  
@@ -50,26 +31,44 @@ describe('Films API', () => {
             .then(({ body }) => actor = body);
     });
 
+    let film;
+
+    beforeEach(() => {
+        return save({
+            title: 'Injoong Strikes Back',
+            studio: studio2._id,
+            released: 2018,
+            cast: [{
+                role: 'Mr. Yoon',
+                actor: actor._id
+            }]
+            
+        })
+            .then(data => {
+                film = data;
+            });
+    });
+
     it('saves a film', () => {
         assert.isOk(film._id);
         
     });
     
 
-    const makeSimple = (film, studio) => {
-        const simple = {
-            _id: film._id,
-            title: film.title,
-            released: film.released
-        };
-        if(studio){
-            simple.studio = {
-                _id: studio._id,
-                name: studio.name
-            };
-        }
-        return simple;
-    };
+    // const makeSimple = (film, studio) => {
+    //     const simple = {
+    //         _id: film._id,
+    //         title: film.title,
+    //         released: film.released
+    //     };
+    //     if(studio){
+    //         simple.studio = {
+    //             _id: studio._id,
+    //             name: studio.name
+    //         };
+    //     }
+    //     return simple;
+    // };
 
     // it('gets all films', () => {
     //     let bmovie;
@@ -91,6 +90,7 @@ describe('Films API', () => {
         return request
             .get(`/api/films/${film._id}`)
             .then(({ body }) => {
+                console.log(body);
                 assert.deepEqual(body, film);
             });
     });

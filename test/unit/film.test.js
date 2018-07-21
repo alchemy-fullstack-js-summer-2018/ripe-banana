@@ -27,7 +27,7 @@ describe('Film model', () => {
     it('validates that a title, studio, released and actor is required', () => {
         const film = new Film({
             cast: [{
-                role: 'Be homeless'
+                role: 'Being homeless'
             }]
         });
 
