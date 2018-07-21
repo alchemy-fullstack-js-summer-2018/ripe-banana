@@ -26,9 +26,19 @@ describe('Film model', () => {
 
     it('validates required fields', () => {
         const film = new Film({});
-        const errors = getErrors(film.validateSync(), 3);
+        let errors = getErrors(film.validateSync(), 3);
         assert.equal(errors.title.kind, 'required');
         assert.equal(errors.studio.kind, 'required');
         assert.equal(errors.released.kind, 'required');
+        const newFilm = new Film({
+            title: 'Hello',
+            studio: Types.ObjectId(),
+            released: 2018,
+            cast: [{
+                role: 'Leading man',
+            }]
+        });
+        errors = getErrors(newFilm.validateSync(), 1);
+        assert.equal(errors['cast.0.actor'].kind, 'required');
     });
 });
