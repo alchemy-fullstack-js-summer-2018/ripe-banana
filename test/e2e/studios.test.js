@@ -13,7 +13,7 @@ describe('Studio API', () => {
             .send(studio)
             .then(checkOk)
             .then(({ body }) => {
-                delete body.__v;
+                //delete body.__v;
                 return body;
             });
     }
@@ -30,6 +30,7 @@ describe('Studio API', () => {
             }
         })
             .then(data => {
+                //delete data.__v;
                 studio = data;
             });
     });
@@ -44,10 +45,11 @@ describe('Studio API', () => {
                 released: 2017
             })    
             .then(({ body }) => {
-                delete body.__v;
                 film = body;
             });
     });
+
+
 
     it('saves a studio', () => {
         assert.isOk(studio._id);
@@ -56,8 +58,16 @@ describe('Studio API', () => {
     const makeSimple = (studio) => {
         const simple = {
             _id: studio._id,
-            name: studio.name
+            name: studio.name,
+            address: studio.address
         };
+
+        if(film){
+            simple.films = [{
+                _id: film._id,
+                title: film.title
+            }];
+        }
         return simple;
     };
 
@@ -81,8 +91,8 @@ describe('Studio API', () => {
         return request
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
-                assert.deepEqual(body, studio);
-                console.log('****STUDIO***', body);
+                delete body.__v;
+                assert.deepEqual(body, makeSimple(studio));
                 
             });
     });
