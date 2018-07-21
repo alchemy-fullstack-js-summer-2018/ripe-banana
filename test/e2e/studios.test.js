@@ -12,7 +12,10 @@ describe('Studio API', () => {
             .post('/api/studios')
             .send(studio)
             .then(checkOk)
-            .then(({ body }) => body);
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
     }
 
     let studio;
@@ -28,6 +31,21 @@ describe('Studio API', () => {
         })
             .then(data => {
                 studio = data;
+            });
+    });
+
+    let film;
+    beforeEach(() => {
+        return request
+            .post('/api/films')
+            .send({
+                title: 'Return of Injoong',
+                studio: studio._id,
+                released: 2017
+            })    
+            .then(({ body }) => {
+                delete body.__v;
+                film = body;
             });
     });
 
@@ -59,12 +77,13 @@ describe('Studio API', () => {
             });
     });
 
-    it.skip('gets a studio by id', () => {
+    it('gets a studio by id', () => {
         return request
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
-                console.log('STUDIO BY ID', body);
                 assert.deepEqual(body, studio);
+                console.log('****STUDIO***', body);
+                
             });
     });
 });
