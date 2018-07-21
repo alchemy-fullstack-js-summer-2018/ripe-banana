@@ -58,6 +58,15 @@ describe('Studio API', () => {
     const makeSimple = (studio) => {
         const simple = {
             _id: studio._id,
+            name: studio.name
+        };
+
+        return simple;
+    };
+
+    const makeSimpleTwo = (studio) => {
+        const simple = {
+            _id: studio._id,
             name: studio.name,
             address: studio.address
         };
@@ -92,7 +101,7 @@ describe('Studio API', () => {
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
                 delete body.__v;
-                assert.deepEqual(body, makeSimple(studio));
+                assert.deepEqual(body, makeSimpleTwo(studio));
                 
             });
     });
