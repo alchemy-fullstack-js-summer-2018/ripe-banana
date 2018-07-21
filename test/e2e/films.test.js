@@ -15,12 +15,12 @@ describe('Films API', () => {
             .then(({ body }) => body);
     }
 
-    let studio2;
+    let studio;
     beforeEach(() => {
         return request  
             .post('/api/studios')
             .send({ name: 'SortaGood Pictures' })
-            .then(({ body }) => studio2 = body);
+            .then(({ body }) => studio = body);
     });
 
     let actor;
@@ -36,7 +36,7 @@ describe('Films API', () => {
     beforeEach(() => {
         return save({
             title: 'Injoong Strikes Back',
-            studio: studio2._id,
+            studio: studio._id,
             released: 2018,
             cast: [{
                 role: 'Mr. Yoon',
@@ -55,36 +55,40 @@ describe('Films API', () => {
     });
     
 
-    // const makeSimple = (film, studio) => {
-    //     const simple = {
-    //         _id: film._id,
-    //         title: film.title,
-    //         released: film.released
-    //     };
-    //     if(studio){
-    //         simple.studio = {
-    //             _id: studio._id,
-    //             name: studio.name
-    //         };
-    //     }
-    //     return simple;
-    // };
+    const makeSimple = (film, studio) => {
+        const simple = {
+            _id: film._id,
+            title: film.title,
+            released: film.released
+        };
+        if(studio){
+            simple.studio = {
+                _id: studio._id,
+                name: studio.name
+            };
+        }
+        return simple;
+    };
 
-    // it('gets all films', () => {
-    //     let bmovie;
-    //     return save({ name: 'B Movie film' })
-    //         .then(_bmovie => {
-    //             bmovie = _bmovie;
-    //             return request.get('/api/films');  
-    //         })
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, [
-    //                 makeSimple(film),
-    //                 makeSimple(bmovie)
-    //             ]);
-    //         });
-    // });
+    it('gets all films', () => {
+        let bmovie;
+        return save({ 
+            title: 'B Movie film',
+            studio: studio._id,
+            released: 2018
+        })
+            .then(_bmovie => {
+                bmovie = _bmovie;
+                return request.get('/api/films');  
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [
+                    makeSimple(film, studio),
+                    makeSimple(bmovie, studio)
+                ]);
+            });
+    });
 
     it('gets a film by id', () => {
         return request
