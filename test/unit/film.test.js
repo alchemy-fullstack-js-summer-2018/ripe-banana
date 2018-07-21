@@ -32,13 +32,11 @@ describe('Film model', () => {
         });
 
         const errors = getErrors(film.validateSync(), 4);
-        //console.log('ERRRORS!!!!', errors['cast.0.actor'].kind);
         
         assert.equal(errors.title.kind, 'required');
         assert.equal(errors.studio.kind, 'required');
         assert.equal(errors.released.kind, 'required');
         assert.equal(errors['cast.0.actor'].kind, 'required');
-        // TO:DO GET ACTOR REQUIRED TO PASS
         
     });
 });
