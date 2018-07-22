@@ -106,7 +106,7 @@ describe.only('Films API', () => {
             });
     });
 
-    it('gets a single film by ID', () => {
+    xit('gets a single film by ID', () => {
         return request
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
