@@ -15,7 +15,6 @@ const makeSimple = (film, studio) => {
     const simple = {
         _id: film._id,
         title: film.title,
-        cast: film.cast,
         released: film.released,
     };
 
@@ -100,7 +99,6 @@ describe.only('Films API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                // console.log(body);
                 assert.deepEqual(body, [
                     makeSimple(inceptionFilm, legendaryStudio),
                     makeSimple(dunkirkFilm, legendaryStudio)
