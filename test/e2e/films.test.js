@@ -105,4 +105,13 @@ describe.only('Films API', () => {
                 ]);
             });
     });
+
+    it('gets a single film by ID', () => {
+        return request
+            .get(`/api/films/${inceptionFilm._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, inceptionFilm);
+            });
+    });
 });
