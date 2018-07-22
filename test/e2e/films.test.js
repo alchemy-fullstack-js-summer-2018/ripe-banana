@@ -11,6 +11,23 @@ function save(film) {
         .then(({ body }) => body);
 }
 
+const makeSimple = (film, studio) => {
+    const simple = {
+        _id: film._id,
+        title: film.title,
+        cast: film.cast,
+        released: film.released,
+    };
+
+    if(studio) {
+        simple.studio = {
+            _id: studio._id,
+            name: studio.name
+        };
+    }
+    return simple;
+};
+
 let inceptionFilm;
 /* eslint-disable-next-line  */
 let legendaryStudio;
@@ -29,8 +46,9 @@ const legendary = {
 const leo = { 
     name:'Leonardo DiCaprio',
     dob: new Date('1980-11-12'),
-    pob: 'Portland, OR'
+    pob: 'Beaverton, OR'
 };
+
 
 describe.only('Films API', () => {
 
@@ -69,12 +87,24 @@ describe.only('Films API', () => {
         assert.isOk(inceptionFilm._id);
     });
 
-    xit('gets all films from the db', () => {
-        return request
-            .get('/api/films')
+    it('gets all films from the database', () => {
+        let dunkirkFilm;
+        return save({
+            title: 'Dunkirk',
+            studio: legendaryStudio._id,
+            released: 2017,
+        })
+            .then(data => {
+                dunkirkFilm = data;
+                return request.get('/api/films');
+            })
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, inceptionFilm);
+                // console.log(body);
+                assert.deepEqual(body, [
+                    makeSimple(inceptionFilm, legendaryStudio),
+                    makeSimple(dunkirkFilm, legendaryStudio)
+                ]);
             });
     });
 });
