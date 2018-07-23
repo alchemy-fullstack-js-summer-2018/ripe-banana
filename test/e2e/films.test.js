@@ -23,6 +23,19 @@ describe('Films API', () => {
             .then(({ body }) => studio = body);
     });
 
+    let reviewer;
+    beforeEach(() => {
+        return request
+            .post('/api/reviewers')
+            .send({ 
+                name: 'Kevin',
+                company: 'Kevin at the Movies, LLC'
+            })
+            .then(({ body }) => reviewer = body);
+    });
+
+    
+    
     let actor;
     beforeEach(() => {
         return request
@@ -30,9 +43,8 @@ describe('Films API', () => {
             .send({ name: 'Arthur' })
             .then(({ body }) => actor = body);
     });
-
+    
     let film;
-
     beforeEach(() => {
         return save({
             title: 'Injoong Strikes Back',
@@ -47,6 +59,18 @@ describe('Films API', () => {
             .then(data => {
                 film = data;
             });
+    });
+
+    let review;
+    beforeEach(() => {
+        return request  
+            .post('/api/reviews')
+            .send({ 
+                rating: 5,
+                reviewer: reviewer._id,
+                review: 'Another great Injoong Flick!',
+                film: film._id })
+            .then(({ body }) => review = body);
     });
 
     it('saves a film', () => {
