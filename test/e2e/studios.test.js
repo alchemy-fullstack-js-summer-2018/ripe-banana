@@ -1,19 +1,7 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
 
-const checkOk = res => {
-    assert.equal(res.status, 200, 'expected http 200 status code');
-    return res;
-};
-
-function save(studio) {
-    return request
-        .post('/api/studios')
-        .send(studio)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
 
 const makeSimple = (studio) => {
     const simple = {
@@ -32,8 +20,15 @@ const makeWithoutVersion = (studio) => {
     return noVersion;
 };
 
+let leoActor;
 let warnerStudios;
 let netflixStudios;
+
+const leo = {
+    name: 'Leonardo Dicaprio',
+    dob: new Date('1972-01-01'),
+    pob: 'Los Angeles'
+};
 
 const warner = {
     name: 'Warner Bros',
@@ -56,15 +51,43 @@ const netflix = {
 describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
 
     beforeEach(() => {
-        return save(warner)
+        return save('studios', warner)
             .then(data => warnerStudios = data);
     });
 
     beforeEach(() => {
-        return save(netflix)
+        return save('studios', netflix)
             .then(data => netflixStudios = data);
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/actors')
+            .send(leo)
+            .then(checkOk)
+            .then(({ body }) => {
+                leoActor = body;
+            });
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/films')
+            .send({
+                title: 'The Lion King',
+                studio: warnerStudios._id,
+                released: 1992,
+                cast: [
+                    {
+                        role: 'Simba',
+                        actor: leoActor._id
+                    }
+                ]
+
+            });
     });
 
     it('saves a studio to the database', () => {
@@ -88,6 +111,21 @@ describe('Studios API', () => {
             .get(`/api/studios/${warnerStudios._id}`)
             .then(({ body }) => {
                 assert.deepEqual(body, makeWithoutVersion(warnerStudios));
+            });
+    });
+
+    it('deletes a studio (but not if its on a film)', () => {
+        return request
+            .delete(`/api/studios/${warnerStudios._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: false });
+            });
+    });
+    it('deletes a studio if there are no associated films', () => {
+        return request
+            .delete(`/api/studios/${netflixStudios._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: true });
             });
     });
 });

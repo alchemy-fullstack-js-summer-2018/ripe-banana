@@ -29,4 +29,3 @@ describe('Studio model', () => {
         assert.equal(errors.name.kind, 'required');
     });
 });
-

@@ -7,6 +7,23 @@ const app = require('../../lib/app');
 const server = createServer(app);
 const request = chai.request(server).keepOpen();
 
+const checkOk = res => {
+    if(res.status !== 200) throw new Error('expected http 200 status code');
+    return res;
+};
+
+const save = (path, data) => {
+    return request
+        .post(`/api/${path}`)
+        .send(data)
+        .then(checkOk)
+        .then(({ body }) => body);
+};
+
 after(done => server.close(done));
 
-module.exports = request;
+module.exports = {
+    request,
+    save,
+    checkOk
+};
