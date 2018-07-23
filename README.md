@@ -1,6 +1,6 @@
-Mongoose Server
+Ripe Banana
 =====
-This is an end-to-end (E2E) tested HTTP server written using Node and Express, with Mongoose as the database, and tested with Mocha/Chai!
+This is a database of movies with reviews, movie studios, actors, reviews, and reviewers. It was written using Mongoose/Node/Express, and tested with Mocha/Chai!
 
 ## Get Started
 1. Fork and clone the repo.
@@ -27,6 +27,6 @@ This is an end-to-end (E2E) tested HTTP server written using Node and Express, w
 * `GET` - will get an array of all objects
 * `GET<id>` - will get an object
 * `PUT<id>` - will update a specified object
-    * Only **actors** and **reviews** can be updated.
+    * Only **actors** and **reviewers** can be updated.
 * `DELETE<id>` - will delete a specified object
     * However, **studios** and **actors** cannot be deleted if they have **films** attached to them.
