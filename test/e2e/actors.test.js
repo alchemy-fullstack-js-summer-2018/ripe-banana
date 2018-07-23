@@ -107,7 +107,7 @@ describe('Actor API', () => {
             });
     });
 
-    it.skip('updates an actor', () => {
+    it('updates an actor', () => {
         actor.name = 'Injoong';
         return request 
             .put(`/api/actors/${actor._id}`)
@@ -118,3 +118,4 @@ describe('Actor API', () => {
             });
     });
 });
+

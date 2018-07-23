@@ -165,4 +165,21 @@ describe('Films API', () => {
             });
             
     });
+
+    it('removes a film', () => {
+        return request
+            .delete(`/api/films/${film._id}`)
+            .then(checkOk)
+            .then(res => {
+                assert.deepEqual(res.body, { removed: true });
+                return request.get('/api/films');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, []);
+            });
+                
+    });
+        
 });
+
