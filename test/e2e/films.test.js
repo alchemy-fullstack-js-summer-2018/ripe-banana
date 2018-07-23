@@ -19,7 +19,7 @@ function saveReview(review) {
         .then(({ body }) => body);
 }
 
-const makeSimple = (film, studio, actor = null) => {
+const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null) => {
     const simple = {
         _id: film._id,
         title: film.title,
@@ -44,6 +44,19 @@ const makeSimple = (film, studio, actor = null) => {
             }
         };
     }
+
+    if(reviews) {
+        simple.reviews = [];
+        simple.reviews[0] = {
+            _id: reviews._id,
+            rating: reviews.rating,
+            review: reviews.review,
+            reviewer: {
+                _id: reviewer._id,
+                name: reviewer.name
+            }
+        };
+    }
     return simple;
 };
 
@@ -51,6 +64,7 @@ let inceptionFilm;
 let legendaryStudio;
 let leoActor;
 let justinChang;
+let inceptionReview;
 
 const legendary = {
     name: 'Legendary',
@@ -124,7 +138,8 @@ describe.only('Films API', () => {
             film: inceptionFilm._id,
             createdAt: new Date(),
             updatedAt: new Date()
-        });
+        })
+            .then(data => inceptionReview = data);
     });
 
     it('saves a film to the database', () => {
@@ -156,7 +171,7 @@ describe.only('Films API', () => {
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor));
+                assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
             });
     });
 });
