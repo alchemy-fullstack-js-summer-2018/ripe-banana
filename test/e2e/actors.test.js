@@ -1,27 +1,6 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
-
-const checkOk = res => {
-    assert.equal(res.status, 200, 'expected http 200 status code');
-    return res;
-};
-
-function save(actor) {
-    return request
-        .post('/api/actors')
-        .send(actor)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
-
-function saveFilm(film) {
-    return request
-        .post('/api/films')
-        .send(film)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
 
 const makeSimple = (actor, films) => {
     const simple = {
@@ -82,26 +61,29 @@ describe('Actors API', () => {
     });
 
     beforeEach(() => {
-        return save(ken)
+        return save('actors', ken)
             .then(data => kenActor = data);
     });
 
     beforeEach(() => {
-        return save(ellen)
+        return save('actors', ellen)
             .then(data => ellenActor = data);
     });
 
     beforeEach(() => {
-        return saveFilm({
-            title: 'Inception',
-            studio: legendaryStudio._id,
-            released: 2010,
-            cast: [{
-                role: 'Saito',
-                actor: kenActor._id
-            }]
-        })
-            .then(data => inceptionFilm = data);
+        return request
+            .post('/api/films')
+            .send({
+                title: 'Inception',
+                studio: legendaryStudio._id,
+                released: 2010,
+                cast: [{
+                    role: 'Saito',
+                    actor: kenActor._id
+                }]
+            })
+            .then(checkOk)
+            .then(({ body }) => inceptionFilm = body);
     });
 
     it('saves an actor to the database', () => {
@@ -134,5 +116,31 @@ describe('Actors API', () => {
             .then((({ body }) => {
                 assert.deepEqual(body, kenActor);
             }));
+    });
+
+    it('removes an actor by ID', () => {
+        return request
+            .delete(`/api/actors/${ellenActor._id}`)
+            .then(checkOk)
+            .then(() => {
+                return request.get('/api/actors');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [kenActor]);
+            });
+    });
+
+    it('doesn\'t remove an actor when they are in a film', () => {
+        return request
+            .get(`/api/actors/${kenActor._id}`)
+            .then(checkOk)
+            .then(() => {
+                return request.delete(`/api/actors/${kenActor._id}`);
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: false });
+            });
     });
 });
