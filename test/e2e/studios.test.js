@@ -12,10 +12,7 @@ describe('Studio API', () => {
             .post('/api/studios')
             .send(studio)
             .then(checkOk)
-            .then(({ body }) => {
-                //delete body.__v;
-                return body;
-            });
+            .then(({ body }) => body);
     }
 
     let studio;
@@ -29,10 +26,7 @@ describe('Studio API', () => {
                 country: 'USA'
             }
         })
-            .then(data => {
-                //delete data.__v;
-                studio = data;
-            });
+            .then(data => studio = data);
     });
 
     let film;
@@ -49,13 +43,20 @@ describe('Studio API', () => {
             });
     });
 
-
-
     it('saves a studio', () => {
         assert.isOk(studio._id);
     });
 
     const makeSimple = (studio) => {
+        const simple = {
+            _id: studio._id,
+            name: studio.name
+        };
+
+        return simple;
+    };
+
+    const makeSimpleTwo = (studio) => {
         const simple = {
             _id: studio._id,
             name: studio.name,
@@ -92,7 +93,8 @@ describe('Studio API', () => {
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
                 delete body.__v;
-                assert.deepEqual(body, makeSimple(studio));
+                console.log(body);
+                assert.deepEqual(body, makeSimpleTwo(studio));
                 
             });
     });
