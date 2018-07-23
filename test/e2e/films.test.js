@@ -11,11 +11,11 @@ function save(film) {
         .then(({ body }) => body);
 }
 
-const makeSimple = (film, studio) => {
+const makeSimple = (film, studio, actor = null) => {
     const simple = {
         _id: film._id,
         title: film.title,
-        released: film.released,
+        released: film.released
     };
 
     if(studio) {
@@ -24,13 +24,23 @@ const makeSimple = (film, studio) => {
             name: studio.name
         };
     }
+    
+    if(actor) {
+        simple.cast = film.cast;
+        simple.cast[0] = {
+            _id: simple.cast[0]._id,
+            role: simple.cast[0].role,
+            actor: {
+                _id: actor._id,
+                name: actor.name
+            }
+        };
+    }
     return simple;
 };
 
 let inceptionFilm;
-/* eslint-disable-next-line  */
 let legendaryStudio;
-/* eslint-disable-next-line  */
 let leoActor;
 
 const legendary = {
@@ -48,10 +58,11 @@ const leo = {
     pob: 'Beaverton, OR'
 };
 
-
 describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('actors'));
     
     beforeEach(() => {
         return request
@@ -111,7 +122,7 @@ describe('Films API', () => {
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, inceptionFilm);
+                assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor));
             });
     });
 });
