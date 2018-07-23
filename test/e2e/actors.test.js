@@ -69,7 +69,7 @@ const ellen = {
     pob: 'Gresham, OR'
 };
 
-describe('Actors API', () => {
+describe.only('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
 
@@ -134,5 +134,31 @@ describe('Actors API', () => {
             .then((({ body }) => {
                 assert.deepEqual(body, kenActor);
             }));
+    });
+
+    it('removes an actor by ID', () => {
+        return request
+            .delete(`/api/actors/${ellenActor._id}`)
+            .then(checkOk)
+            .then(() => {
+                return request.get('/api/actors');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [kenActor]);
+            });
+    });
+
+    it('doesn\'t remove an actor when they are in a film', () => {
+        return request
+            .get(`/api/actors/${kenActor._id}`)
+            .then(checkOk)
+            .then(() => {
+                return request.delete(`/api/actors/${kenActor._id}`);
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: false });
+            });
     });
 });
