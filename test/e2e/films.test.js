@@ -83,6 +83,7 @@ describe('Films API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
+                console.log('get all block ', body);
                 assert.deepEqual(body, [
                     makeSimple(film, studio),
                     makeSimple(bmovie, studio)
@@ -95,6 +96,8 @@ describe('Films API', () => {
             .get(`/api/films/${film._id}`)
             .then(({ body }) => {
                 assert.deepEqual(body, film);
+                console.log('get by id block ', body);
             });
+            
     });
 });
