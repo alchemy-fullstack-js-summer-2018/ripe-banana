@@ -7,45 +7,105 @@ const checkOk = res => {
     return res;
 };
 
+function save(actor) {
+    return request
+        .post('/api/actors')
+        .send(actor)
+        .then(checkOk)
+        .then(({ body }) => body);
+}
+
+function saveFilm(film) {
+    return request
+        .post('/api/films')
+        .send(film)
+        .then(checkOk)
+        .then(({ body }) => body);
+}
+
+const makeSimple = (actor, films) => {
+    const simple = {
+        _id: actor._id,
+        name: actor.name,
+        dob: actor.dob,
+        pob: actor.pob
+    };
+
+    if(films) {
+        simple.films = [];
+        simple.films[0] = {
+            _id: films._id,
+            title: films.title,
+            released: films.released
+        };
+    }
+
+    return simple;
+};
+
+let inceptionFilm;
+let legendaryStudio;
+let kenActor;
+let ellenActor;
+
+const legendary = {
+    name: 'Legendary',
+    address: {
+        city: 'Santa Monica',
+        state: 'CA',
+        country: 'United States'
+    }
+};
+
+const ken = { 
+    name:'Ken Watanabe',
+    dob: new Date('1920-11-12'),
+    pob: 'Beaverton, OR'
+};
+
+const ellen = {
+    name: 'Ellen Page',
+    dob: new Date('1985-01-21'),
+    pob: 'Gresham, OR'
+};
+
 describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
 
-    function save(actor) {
+    beforeEach(() => {
         return request
-            .post('/api/actors')
-            .send(actor)
+            .post('/api/studios')
+            .send(legendary)
             .then(checkOk)
-            .then(({ body }) => body);
-    }
-
-    let theGos;
-    let dannyDevito;
-
-    beforeEach(() => {
-        return save({ 
-            name:'Ryan Gosling',
-            dob: new Date('1980-11-12'),
-            pob: 'Portland, OR'
-        })
-            .then(data => {
-                theGos = data;
-            });
+            .then(({ body }) => legendaryStudio = body);
     });
+
     beforeEach(() => {
-        return save({ 
-            name:'Danny DeVito',
-            dob: new Date('1944-11-17'),
-            pob: 'Los Angeles, CA'
+        return save(ken)
+            .then(data => kenActor = data);
+    });
+
+    beforeEach(() => {
+        return save(ellen)
+            .then(data => ellenActor = data);
+    });
+
+    beforeEach(() => {
+        return saveFilm({
+            title: 'Inception',
+            studio: legendaryStudio._id,
+            released: 2010,
+            cast: [{
+                role: 'Saito',
+                actor: kenActor._id
+            }]
         })
-            .then(data => {
-                dannyDevito = data;
-            });
+            .then(data => inceptionFilm = data);
     });
 
     it('saves an actor to the database', () => {
-        assert.isOk(theGos._id);
-        assert.isOk(dannyDevito._id);
+        assert.isOk(kenActor._id);
     });
 
     it('gets all actors from the db', () => {
@@ -53,26 +113,26 @@ describe('Actors API', () => {
             .get('/api/actors')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [theGos, dannyDevito]);
+                assert.deepEqual(body, [kenActor, ellenActor]);
             });
     });
 
     it('gets one actor by specific id', () => {
         return request
-            .get(`/api/actors/${dannyDevito._id}`)
+            .get(`/api/actors/${kenActor._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, dannyDevito);
+                assert.deepEqual(body, makeSimple(kenActor, inceptionFilm));
             });
     });
 
     it('updates an actor when given their id', () => {
-        dannyDevito.pob = 'Boston, MA';
+        kenActor.pob = 'Boston, MA';
         return request
-            .put(`/api/actors/${dannyDevito._id}`)
-            .send(dannyDevito)
+            .put(`/api/actors/${kenActor._id}`)
+            .send(kenActor)
             .then((({ body }) => {
-                assert.deepEqual(body, dannyDevito);
+                assert.deepEqual(body, kenActor);
             }));
     });
 });
