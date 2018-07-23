@@ -5,7 +5,13 @@ const { checkOk } = request;
 
 describe('Actor API', () => {
 
-    beforeEach(() => dropCollection('actors'));
+    beforeEach(() => {
+        dropCollection('reviews');
+        dropCollection('reviewers');
+        dropCollection('actors');
+        dropCollection('films');
+        dropCollection('studios');
+    });
 
     function save(actor) {
         return request
@@ -29,7 +35,27 @@ describe('Actor API', () => {
             });
     });
 
-    it('saves a actor', () => {
+    let studio;
+    beforeEach(() => {
+        return request  
+            .post('/api/studios')
+            .send({ name: 'SortaGood Pictures' })
+            .then(({ body }) => studio = body);
+    });
+
+    let film;
+    beforeEach(() => {
+        return request
+            .post('/api/films')
+            .send({
+                title: 'Return of Injoong',
+                studio: studio._id,
+                released: 2017
+            })
+            .then(({ body }) => film = body);
+    });
+
+    it('saves an actor', () => {
         assert.isOk(actor._id);
     });
 
@@ -41,16 +67,39 @@ describe('Actor API', () => {
                 return request.get('/api/actors');  
             })
             .then(checkOk)
+            
             .then(({ body }) => {
+                
                 assert.deepEqual(body, [actor, mark]);
             });
     });
 
-    it('gets a actor by id', () => {
+    const makeSimple = (actor, film) => {
+        const simple = {
+            _id: actor._id,
+            name: actor.name,
+            dob: actor.dob,
+            pob: actor.pob
+        };
+        if(film){
+            simple.films = [{
+                _id: film._id,
+                title: film.title,
+                released: film.released
+            }];
+        }
+        return simple;
+    };
+
+
+
+    it('gets an actor by id', () => {
         return request
             .get(`/api/actors/${actor._id}`)
+            .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, actor);
+                console.log(makeSimple(actor, film));
+                assert.deepEqual(body, makeSimple(actor, film));
             });
     });
 
