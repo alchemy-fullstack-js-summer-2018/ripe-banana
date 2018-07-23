@@ -43,7 +43,7 @@ describe('Films API', () => {
             .send({ name: 'Arthur' })
             .then(({ body }) => actor = body);
     });
-    
+
     let film;
     beforeEach(() => {
         return save({
@@ -139,8 +139,10 @@ describe('Films API', () => {
         return request
             .get(`/api/films/${film._id}`)
             .then(({ body }) => {
-                assert.deepEqual(body, film);
-                console.log('get by id block ', makeSimple(film, studio, reviewer, review, actor));
+                console.log('get by id block ', body);
+                delete body.__v;
+                assert.deepEqual(body, makeSimple(film));
+                
             });
             
     });
