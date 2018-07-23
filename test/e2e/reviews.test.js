@@ -43,8 +43,16 @@ describe.only('Reviews API', () => {
     });
 
     it('saves a review to the database', () => {
-        console.log(inceptionReview);
         assert.isOk(inceptionReview._id);
+    });
+
+    it('gets all reviews from the database', () => {
+        return request
+            .get('/api/reviews')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [inceptionReview]);
+            });
     });
 
 });
