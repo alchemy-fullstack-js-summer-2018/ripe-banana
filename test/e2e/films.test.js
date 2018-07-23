@@ -86,7 +86,7 @@ const justin = {
     company: 'The Hollywood Reporter'
 };
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
