@@ -174,4 +174,12 @@ describe('Films API', () => {
                 assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
             });
     });
+
+    it.only('deletes a film', () => {
+        return request
+            .delete(`/api/films/${inceptionFilm._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: true });
+            });
+    });
 });
