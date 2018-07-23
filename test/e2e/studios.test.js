@@ -97,4 +97,23 @@ describe('Studio API', () => {
                 
             });
     });
+
+    it('removes a studio', () => {
+        let acl;
+        return save({ name: 'ACL Studio' })
+            .then(data => acl = data)
+            .then(() => {
+                return request
+                    .delete(`/api/studios/${acl._id}`)
+                    .then(checkOk)
+                    .then(res => {
+                        assert.deepEqual(res.body, { removed: true });
+                        return request.get('/api/studios');
+                    })
+                    .then(checkOk)
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [makeSimple(studio)]);
+                    });
+            });
+    });
 });
