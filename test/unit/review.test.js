@@ -24,8 +24,10 @@ describe('Review model', () => {
 
     it('validates that a name and company is required', () => {
         const reviewer = new Review({});
-        const errors = getErrors(reviewer.validateSync(), 2);
-        assert.equal(errors.name.kind, 'required');
-        assert.equal(errors.company.kind, 'required');
+        const errors = getErrors(reviewer.validateSync(), 4);
+        assert.equal(errors.rating.kind, 'required');
+        assert.equal(errors.reviewer.kind, 'required');
+        assert.equal(errors.review.kind, 'required');
+        assert.equal(errors.film.kind, 'required');
     });
 });
