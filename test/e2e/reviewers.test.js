@@ -5,7 +5,13 @@ const { checkOk } = request;
 
 describe('Reviewer API', () => {
 
-    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => {
+        dropCollection('reviews');
+        dropCollection('reviewers');
+        dropCollection('actors');
+        dropCollection('films');
+        dropCollection('studios');
+    });
 
     function save(reviewer) {
         return request
