@@ -61,7 +61,7 @@ const makeSimple = (review, film) => {
     return simple;
 };
 
-describe.only('Reviews API', () => {
+describe('Reviews API', () => {
 
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
@@ -126,7 +126,6 @@ describe.only('Reviews API', () => {
             .get('/api/reviews')
             .then(checkOk)
             .then(({ body }) => {
-                console.log('***POPULATED***', body);
                 assert.deepEqual(body, [makeSimple(inceptionReview, inceptionFilm)]);
             });
     });

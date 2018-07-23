@@ -11,6 +11,14 @@ function save(film) {
         .then(({ body }) => body);
 }
 
+function saveReview(review) {
+    return request
+        .post('/api/reviews')
+        .send(review)
+        .then(checkOk)
+        .then(({ body }) => body);
+}
+
 const makeSimple = (film, studio, actor = null) => {
     const simple = {
         _id: film._id,
@@ -42,6 +50,7 @@ const makeSimple = (film, studio, actor = null) => {
 let inceptionFilm;
 let legendaryStudio;
 let leoActor;
+let justinChang;
 
 const legendary = {
     name: 'Legendary',
@@ -58,11 +67,17 @@ const leo = {
     pob: 'Beaverton, OR'
 };
 
-describe('Films API', () => {
+const justin = {
+    name: 'Justin Chang',
+    company: 'The Hollywood Reporter'
+};
+
+describe.only('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviews'));
     
     beforeEach(() => {
         return request
@@ -81,6 +96,14 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
+        return request
+            .post('/api/reviewers')
+            .send(justin)
+            .then(checkOk)
+            .then(({ body }) => justinChang = body);
+    });
+
+    beforeEach(() => {
         return save({
             title: 'Inception',
             studio: legendaryStudio._id,
@@ -91,6 +114,17 @@ describe('Films API', () => {
             }]
         })
             .then(data => inceptionFilm = data);
+    });
+
+    beforeEach(() => {
+        return saveReview({
+            rating: 5,
+            reviewer: justinChang._id,
+            review: '...a loop within the movie\'s plot that binds space and time into...',
+            film: inceptionFilm._id,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
     });
 
     it('saves a film to the database', () => {
