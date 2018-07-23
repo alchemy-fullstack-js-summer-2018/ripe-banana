@@ -1,23 +1,6 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
-const { checkOk } = request;
-
-function save(film) {
-    return request
-        .post('/api/films')
-        .send(film)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
-
-function saveReview(review) {
-    return request
-        .post('/api/reviews')
-        .send(review)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
 
 const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null) => {
     const simple = {
@@ -118,7 +101,7 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
-        return save({
+        return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
             released: 2010,
@@ -131,7 +114,7 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
-        return saveReview({
+        return save('reviews', {
             rating: 5,
             reviewer: justinChang._id,
             review: '...a loop within the movie\'s plot that binds space and time into...',
@@ -148,7 +131,7 @@ describe('Films API', () => {
 
     it('gets all films from the database', () => {
         let dunkirkFilm;
-        return save({
+        return save('films', {
             title: 'Dunkirk',
             studio: legendaryStudio._id,
             released: 2017,
@@ -172,6 +155,14 @@ describe('Films API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
+            });
+    });
+
+    it('deletes a film', () => {
+        return request
+            .delete(`/api/films/${inceptionFilm._id}`)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: true });
             });
     });
 });

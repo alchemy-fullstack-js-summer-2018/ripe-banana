@@ -1,30 +1,6 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
-
-const { checkOk } = request;
-
-function save(reviewer) {
-    return request
-        .post('/api/reviewers')
-        .send(reviewer)
-        .then(checkOk)
-        .then(({ body }) => body); 
-}
-function saveFilm(film) {
-    return request
-        .post('/api/films')
-        .send(film)
-        .then(checkOk)
-        .then(({ body }) => body); 
-}
-function saveReview(review) {
-    return request
-        .post('/api/reviews')
-        .send(review)
-        .then(checkOk)
-        .then(({ body }) => body); 
-}
 
 const makeSimple = (reviewer, reviews, film) => {
     const simple = {
@@ -89,11 +65,8 @@ describe('Reviewers API', () => {
             .post('/api/actors')
             .send(leo)
             .then(checkOk)
-            .then(({ body }) => leoActor = body);
-            
+            .then(({ body }) => leoActor = body);     
     });
-
-    
     
     beforeEach(() => {
         return request
@@ -101,7 +74,6 @@ describe('Reviewers API', () => {
             .send(legendary)
             .then(checkOk)
             .then(({ body }) => legendaryStudio = body);
-            
     });
     
     beforeEach(() => {
@@ -113,7 +85,7 @@ describe('Reviewers API', () => {
     });
     
     beforeEach(() => {
-        return saveFilm({
+        return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
             released: 2010,
@@ -126,7 +98,7 @@ describe('Reviewers API', () => {
     });
 
     beforeEach(() => {
-        return saveReview({
+        return save('reviews', {
             rating: 5,
             reviewer: justinChang._id,
             review: 'It was great',
@@ -135,8 +107,6 @@ describe('Reviewers API', () => {
         })
             .then(data => inceptionReview = data);
     });
-    
-
 
     it('saves a reviewer', ()=> {
         assert.isOk(justinChang._id);
@@ -153,7 +123,7 @@ describe('Reviewers API', () => {
 
     it('gets a list of reviewers', () => {
         let injoong;
-        return save({
+        return save('reviewers', {
             name: 'Injoong Yoon',
             company: 'Variety' 
         })
@@ -166,10 +136,7 @@ describe('Reviewers API', () => {
                 assert.deepEqual(body, [
                     justinChang, 
                     injoong
-                    // makeSimple(justinChang, inceptionReview, inceptionFilm),
-                    // makeSimple(injoong) 
                 ]);
-
             });
     });
 
