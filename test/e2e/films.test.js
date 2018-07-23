@@ -79,16 +79,37 @@ describe('Films API', () => {
     });
     
 
-    const makeSimple = (film, studio) => {
+    const makeSimple = (film, studio, reviewer, review, actor) => {
+       
         const simple = {
             _id: film._id,
             title: film.title,
-            released: film.released
+            released: film.released,
+            cast: film.cast
         };
         if(studio){
             simple.studio = {
                 _id: studio._id,
                 name: studio.name
+            };
+        }
+        if(actor) {
+            simple.cast[0].actor = {
+                _id: actor._id,
+                name: actor.name
+            };
+        }
+        if(review) {
+            simple.reviews = [{
+                _id: review._id,
+                rating: review.rating,
+                review: review.review
+            }];
+        }
+        if(reviewer) {
+            simple.reviews.reviewer = {
+                _id: reviewer._id,
+                name: reviewer.name
             };
         }
         return simple;
@@ -107,7 +128,6 @@ describe('Films API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                console.log('get all block ', body);
                 assert.deepEqual(body, [
                     makeSimple(film, studio),
                     makeSimple(bmovie, studio)
@@ -120,7 +140,7 @@ describe('Films API', () => {
             .get(`/api/films/${film._id}`)
             .then(({ body }) => {
                 assert.deepEqual(body, film);
-                console.log('get by id block ', body);
+                console.log('get by id block ', makeSimple(film, studio, reviewer, review, actor));
             });
             
     });

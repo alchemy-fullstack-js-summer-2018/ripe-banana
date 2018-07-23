@@ -93,7 +93,6 @@ describe('Studio API', () => {
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
                 delete body.__v;
-                console.log(body);
                 assert.deepEqual(body, makeSimpleTwo(studio));
                 
             });
