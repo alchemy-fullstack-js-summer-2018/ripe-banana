@@ -4,17 +4,78 @@ const { dropCollection } = require('./db');
 
 const { checkOk } = request;
 
-describe('Reviewers API', () => {
+function save(reviewer) {
+    return request
+        .post('/api/reviewers')
+        .send(reviewer)
+        .then(checkOk)
+        .then(({ body }) => body); 
+}
+
+describe.only('Reviewers API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => dropCollection('films'));
 
-    function save(reviewer) {
+    // function save(reviewer) {
+    //     return request
+    //         .post('/api/reviewers')
+    //         .send(reviewer)
+    //         .then(checkOk)
+    //         .then(({ body }) => body); 
+    // }
+
+    const makeSimple = (reviewer, review, film) => {
+        const simple = {
+            _id: reviewer._id,
+            company: reviewer.company
+        };
+    
+        if(review) {
+            simple.review = reviewer.review;
+            simple.review[0] = {
+                _id: simple.review[0]._id,
+                rating: simple.review[0].rating,
+                review: simple.review[0].review
+            };
+        }
+        
+        if(film) {
+            simple.film = {
+                _id: film._id,
+                title: film.title
+
+            };
+        }
+        return simple;
+    };
+
+    let inceptionFilm;
+    const inception = {
+        title: 'Inception',
+        studio: inception._id,
+        released: 2010
+    };
+    beforeEach(() => {
         return request
-            .post('/api/reviewers')
-            .send(reviewer)
+            .post('/api/films')
+            .send(inception)
             .then(checkOk)
-            .then(({ body }) => body); 
-    }
+            .then(({ body }) => inceptionFilm = body);
+    });
+
+    let evaluateReview;
+    const evaluate = {
+        rating: 4,
+        review: 'It is boring.'
+    };
+    beforeEach(() => {
+        return request
+            .post('api/reviews')
+            .send()
+    })
+
 
     let justinChang;
     beforeEach(() => {
@@ -25,6 +86,7 @@ describe('Reviewers API', () => {
             .then(data => {
                 justinChang = data;
             });
+    
     });
 
     it('saves a reviewer', ()=> {

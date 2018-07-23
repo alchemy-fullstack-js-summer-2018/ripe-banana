@@ -49,7 +49,7 @@ const leo = {
 };
 
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     
