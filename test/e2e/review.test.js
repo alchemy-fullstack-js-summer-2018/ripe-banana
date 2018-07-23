@@ -5,7 +5,12 @@ const { checkOk } = request;
 
 describe('Review API', () => {
 
-    beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => {
+        dropCollection('reviews');
+        dropCollection('reviewers');
+        dropCollection('films');
+        dropCollection('studios');
+    });
 
     let reviewer;
     beforeEach(() => {

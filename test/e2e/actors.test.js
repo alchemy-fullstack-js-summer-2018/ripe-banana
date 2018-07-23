@@ -30,9 +30,7 @@ describe('Actor API', () => {
             pob: 'Phoenix'
 
         })
-            .then(data => {
-                actor = data;
-            });
+            .then(data => actor = data);
     });
 
     let studio;
@@ -95,8 +93,6 @@ describe('Actor API', () => {
         return simple;
     };
 
-
-
     it('gets an actor by id', () => {
         return request
             .get(`/api/actors/${actor._id}`)
@@ -107,7 +103,7 @@ describe('Actor API', () => {
             });
     });
 
-    it.skip('updates an actor', () => {
+    it('updates an actor', () => {
         actor.name = 'Injoong';
         return request 
             .put(`/api/actors/${actor._id}`)
@@ -116,5 +112,26 @@ describe('Actor API', () => {
             .then(({ body }) => {
                 assert.deepEqual(body, actor);
             });
+    });
+
+    it('removes an actor', () => {
+        let mario;
+        return save({ name: 'Mario' })
+            .then(data => mario = data)
+            .then(() => {
+                return request
+                    .delete(`/api/actors/${mario._id}`)
+                    .then(checkOk)
+                    .then(res => {
+                        assert.deepEqual(res.body, { removed: true });
+                        return request.get('/api/actors');
+                    })
+                    .then(checkOk)
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [actor]);
+                    });
+
+            });
+
     });
 });

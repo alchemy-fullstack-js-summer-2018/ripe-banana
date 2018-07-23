@@ -5,7 +5,13 @@ const { checkOk } = request;
 
 describe('Reviewer API', () => {
 
-    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => {
+        dropCollection('reviews');
+        dropCollection('reviewers');
+        dropCollection('actors');
+        dropCollection('films');
+        dropCollection('studios');
+    });
 
     function save(reviewer) {
         return request
@@ -121,15 +127,15 @@ describe('Reviewer API', () => {
             });
     });
 
-    // it.skip('updates a reviewer', () => {
-    //     reviewer.name = 'Robert';
-    //     return request 
-    //         .put(`/api/reviewers/${reviewer._id}`)
-    //         .send(reviewer)
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, reviewer);
-    //         });
-    // });
+    it('updates a reviewer', () => {
+        bobby.name = 'Robert';
+        return request 
+            .put(`/api/reviewers/${bobby._id}`)
+            .send(bobby)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, bobby);
+            });
+    });
 
 });
