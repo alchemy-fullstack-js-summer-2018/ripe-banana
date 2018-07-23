@@ -7,10 +7,10 @@ const checkOk = res => {
     return res;
 };
 
-function save(actor) {
+function save(path, data) {
     return request
-        .post('/api/actors')
-        .send(actor)
+        .post(`/api/${path}`)
+        .send(data)
         .then(checkOk)
         .then(({ body }) => body);
 }
@@ -74,12 +74,12 @@ describe.only('Actors API', () => {
     });
 
     beforeEach(() => {
-        return save(ken)
+        return save('actors', ken)
             .then(data => kenActor = data);
     });
 
     beforeEach(() => {
-        return save(ellen)
+        return save('actors', ellen)
             .then(data => ellenActor = data);
     });
 

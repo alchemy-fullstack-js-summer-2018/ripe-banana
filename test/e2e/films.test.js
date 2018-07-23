@@ -3,18 +3,10 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-function save(film) {
+function save(path, data) {
     return request
-        .post('/api/films')
-        .send(film)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
-
-function saveReview(review) {
-    return request
-        .post('/api/reviews')
-        .send(review)
+        .post(`/api/${path}`)
+        .send(data)
         .then(checkOk)
         .then(({ body }) => body);
 }
@@ -118,7 +110,7 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
-        return save({
+        return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
             released: 2010,
@@ -131,7 +123,7 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
-        return saveReview({
+        return save('reviews', {
             rating: 5,
             reviewer: justinChang._id,
             review: '...a loop within the movie\'s plot that binds space and time into...',
@@ -148,7 +140,7 @@ describe('Films API', () => {
 
     it('gets all films from the database', () => {
         let dunkirkFilm;
-        return save({
+        return save('films', {
             title: 'Dunkirk',
             studio: legendaryStudio._id,
             released: 2017,

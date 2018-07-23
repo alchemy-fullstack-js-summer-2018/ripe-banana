@@ -7,10 +7,10 @@ const checkOk = res => {
     return res;
 };
 
-function save(studio) {
+function save(path, data) {
     return request
-        .post('/api/studios')
-        .send(studio)
+        .post(`/api/${path}`)
+        .send(data)
         .then(checkOk)
         .then(({ body }) => body);
 }
@@ -66,12 +66,12 @@ describe('Studios API', () => {
     beforeEach(() => dropCollection('films'));
 
     beforeEach(() => {
-        return save(warner)
+        return save('studios', warner)
             .then(data => warnerStudios = data);
     });
 
     beforeEach(() => {
-        return save(netflix)
+        return save('studios', netflix)
             .then(data => netflixStudios = data);
     });
 

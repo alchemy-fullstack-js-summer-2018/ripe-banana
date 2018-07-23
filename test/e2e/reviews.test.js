@@ -3,17 +3,10 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-function save(review) {
+function save(path, data) {
     return request
-        .post('/api/reviews')
-        .send(review)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
-function saveFilm(film) {
-    return request
-        .post('/api/films')
-        .send(film)
+        .post(`/api/${path}`)
+        .send(data)
         .then(checkOk)
         .then(({ body }) => body);
 }
@@ -94,7 +87,7 @@ describe('Reviews API', () => {
     });
 
     beforeEach(() => {
-        return saveFilm({
+        return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
             released: 2010,
@@ -107,7 +100,7 @@ describe('Reviews API', () => {
     });
     
     beforeEach(() => {
-        return save({
+        return save('reviews', {
             rating: 5,
             reviewer: justinChang._id,
             review: 'It was great',
@@ -129,5 +122,4 @@ describe('Reviews API', () => {
                 assert.deepEqual(body, [makeSimple(inceptionReview, inceptionFilm)]);
             });
     });
-
 });
