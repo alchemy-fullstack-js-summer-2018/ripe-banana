@@ -10,33 +10,101 @@ function save(review) {
         .then(checkOk)
         .then(({ body }) => body);
 }
+function saveFilm(film) {
+    return request
+        .post('/api/films')
+        .send(film)
+        .then(checkOk)
+        .then(({ body }) => body);
+}
 
-let inception;
-let reviewer;
+let leoActor;
+let legendaryStudio;
+let justinChang;
+let inceptionFilm;
 let inceptionReview;
+
+const justin = {
+    name: 'Justin Chang',
+    company: 'The Hollywood Reporter' 
+};
+
+const leo = { 
+    name:'Leonardo DiCaprio',
+    dob: new Date('1980-11-12'),
+    pob: 'Beaverton, OR'
+};
+
+const legendary = {
+    name: 'Legendary',
+    address: {
+        city: 'Santa Monica',
+        state: 'CA',
+        country: 'United States'
+    }
+};
+
+// const inception = {
+//     title: 'Inception',
+//     studio: legendaryStudio._id,
+//     released: 2010,
+//     cast: [{
+//         role: 'Cobb',
+//         actor: leoActor._id
+//     }]
+// };
 
 describe.only('Reviews API', () => {
 
     beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('reviewers'));
+
+    beforeEach(() => {
+        return request
+            .post('/api/actors')
+            .send(leo)
+            .then(checkOk)
+            .then(({ body }) => leoActor = body);
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/studios')
+            .send(legendary)
+            .then(checkOk)
+            .then(({ body }) => legendaryStudio = body);
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/reviewers')
+            .send(justin)
+            .then(checkOk)
+            .then(({ body }) => justinChang = body);
+    });
+
+    beforeEach(() => {
+        return saveFilm({
+            title: 'Inception',
+            studio: legendaryStudio._id,
+            released: 2010,
+            cast: [{
+                role: 'Cobb',
+                actor: leoActor._id
+            }]
+        })
+            .then(data => inceptionFilm = data);
+    });
     
-    beforeEach(() => {
-        return request
-            .get('/api/films/5b5567b61b07a52fb46d04a1')
-            .then(checkOk)
-            .then(({ body }) => inception = body);
-    });
-    beforeEach(() => {
-        return request
-            .get('/api/reviewers/5b5567454081862ac88779da')
-            .then(checkOk)
-            .then(({ body }) => reviewer = body);
-    });
     beforeEach(() => {
         return save({
             rating: 5,
-            reviewer: reviewer._id,
+            reviewer: justinChang._id,
             review: 'It was great',
-            film: inception._id,
+            film: inceptionFilm._id,
             createdAt: new Date()
         })
             .then(data => inceptionReview = data);
