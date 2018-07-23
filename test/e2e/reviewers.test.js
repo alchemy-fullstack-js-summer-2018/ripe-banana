@@ -51,9 +51,31 @@ const makeSimple = (reviewer, review, film) => {
     return simple;
 };
 
+let leoActor;
+let legendaryStudio;
+let justinChang;
+let inceptionFilm;
+let inceptionReview;
 
-// /* eslint-disable-next-line  */
+const justin = {
+    name: 'Justin Chang',
+    company: 'The Hollywood Reporter' 
+};
 
+const leo = { 
+    name:'Leonardo DiCaprio',
+    dob: new Date('1980-11-12'),
+    pob: 'Beaverton, OR'
+};
+
+const legendary = {
+    name: 'Legendary',
+    address: {
+        city: 'Santa Monica',
+        state: 'CA',
+        country: 'United States'
+    }
+};
 
 describe.only('Reviewers API', () => {
 
@@ -61,74 +83,76 @@ describe.only('Reviewers API', () => {
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('actors'));
 
-    // function save(reviewer) {
-    //     return request
-    //         .post('/api/reviewers')
-    //         .send(reviewer)
-    //         .then(checkOk)
-    //         .then(({ body }) => body); 
-    // }
+    beforeEach(() => {
+        return request
+            .post('/api/actors')
+            .send(leo)
+            .then(checkOk)
+            .then(({ body }) => leoActor = body);
+            
+    });
 
     
-
-    let universalStudio;
-    const universal = {
-        name: 'Universal Studios',
-    };
+    
     beforeEach(() => {
         return request
             .post('/api/studios')
-            .send(universal)
+            .send(legendary)
             .then(checkOk)
-            .then(({ body }) => {
-                console.log(body);
-                universalStudio = body;
-                inception.studio = body._id;
-            });
+            .then(({ body }) => legendaryStudio = body);
             
     });
     
-
-    let inceptionFilm;
-    const inception = {
-        title: 'Inception',
-        studio: universalStudio._id,
-        released: 2010
-    };
     beforeEach(() => {
         return request
-            .post('/api/films')
-            .send(inception)
+            .post('/api/reviewers')
+            .send(justin)
             .then(checkOk)
-            .then(({ body }) => inceptionFilm = body);
+            .then(({ body }) => justinChang = body);
     });
-
-    let evaluateReview;
-    const evaluate = {
-        rating: 4,
-        review: 'It is boring.'
-    };
-    beforeEach(() => {
-        return request
-            .post('api/reviews')
-            .send()
-            .then(checkOk)
-            .then(({ body }) => evaluateReview = body);
-    });
-
-
-    let justinChang;
-    beforeEach(() => {
-        return save({
-            name: 'Justin Chang',
-            company: 'The Hollywood Reporter' 
-        })
-            .then(data => {
-                justinChang = data;
-            });
     
+    beforeEach(() => {
+        return saveFilm({
+            title: 'Inception',
+            studio: legendaryStudio._id,
+            released: 2010,
+            cast: [{
+                role: 'Cobb',
+                actor: leoActor._id
+            }]
+        })
+            .then(data => inceptionFilm = data);
     });
+
+    beforeEach(() => {
+        return saveReview({
+            rating: 5,
+            reviewer: justinChang._id,
+            review: 'It was great',
+            film: inceptionFilm._id,
+            createdAt: new Date()
+        })
+            .then(data => inceptionReview = data);
+    });
+    
+
+    
+    
+
+
+    
+    // beforeEach(() => {
+    //     return save({
+    //         name: 'Justin Chang',
+    //         company: 'The Hollywood Reporter' 
+    //     })
+    //         .then(data => {
+    //             justinChang = data;
+    //         });
+    
+    // });
 
     it('saves a reviewer', ()=> {
         assert.isOk(justinChang._id);
@@ -138,11 +162,12 @@ describe.only('Reviewers API', () => {
         return request
             .get(`/api/reviewers/${justinChang._id}`)
             .then(({ body }) => {
+                console.log(body);
                 assert.deepEqual(body, justinChang);
             });
     });
 
-    it('gets a list of reviewers', () => {
+    it.skip('gets a list of reviewers', () => {
         let injoong;
         return save({
             name: 'Injoong Yoon',
@@ -162,7 +187,7 @@ describe.only('Reviewers API', () => {
             });
     });
 
-    it('updates a reviewer', () => {
+    it.skip('updates a reviewer', () => {
         justinChang.name = 'Robert Thompson';
         return request
             .put(`/api/reviewers/${justinChang._id}`)
