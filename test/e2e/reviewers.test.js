@@ -1,16 +1,6 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
-
-const { checkOk } = request;
-
-function save(path, data) {
-    return request
-        .post(`/api/${path}`)
-        .send(data)
-        .then(checkOk)
-        .then(({ body }) => body); 
-}
 
 const makeSimple = (reviewer, reviews, film) => {
     const simple = {

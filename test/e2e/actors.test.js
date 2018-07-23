@@ -1,19 +1,6 @@
 const { assert } = require('chai');
-const request = require('./request');
+const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
-
-const checkOk = res => {
-    assert.equal(res.status, 200, 'expected http 200 status code');
-    return res;
-};
-
-function save(path, data) {
-    return request
-        .post(`/api/${path}`)
-        .send(data)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
 
 const makeSimple = (actor, films) => {
     const simple = {
@@ -61,7 +48,7 @@ const ellen = {
     pob: 'Gresham, OR'
 };
 
-describe.only('Actors API', () => {
+describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
 
