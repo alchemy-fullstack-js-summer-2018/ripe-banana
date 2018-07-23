@@ -158,7 +158,7 @@ describe('Films API', () => {
             });
     });
 
-    it.only('deletes a film', () => {
+    it('deletes a film', () => {
         return request
             .delete(`/api/films/${inceptionFilm._id}`)
             .then(({ body }) => {

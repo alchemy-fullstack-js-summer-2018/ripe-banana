@@ -6,7 +6,8 @@ let leoActor;
 let legendaryStudio;
 let justinChang;
 let inceptionFilm;
-let inceptionReview;
+let inceptionReview1;
+let inceptionReview2;
 
 const justin = {
     name: 'Justin Chang',
@@ -33,6 +34,7 @@ const makeSimple = (review, film) => {
         _id: review._id,
         rating: review.rating,
         review: review.review,
+        createdAt: review.createdAt
     };
 
     if(film) {
@@ -96,13 +98,23 @@ describe('Reviews API', () => {
             reviewer: justinChang._id,
             review: 'It was great',
             film: inceptionFilm._id,
-            createdAt: new Date()
+            createdAt: new Date('2009-11-11')
         })
-            .then(data => inceptionReview = data);
+            .then(data => inceptionReview1 = data);
+    });
+    beforeEach(() => {
+        return save('reviews', {
+            rating: 4,
+            reviewer: justinChang._id,
+            review: 'It was meh',
+            film: inceptionFilm._id,
+            createdAt: new Date('2016-10-17')
+        })
+            .then(data => inceptionReview2 = data);
     });
 
     it('saves a review to the database', () => {
-        assert.isOk(inceptionReview._id);
+        assert.isOk(inceptionReview1._id);
     });
 
     it('gets all reviews from the database', () => {
@@ -110,7 +122,7 @@ describe('Reviews API', () => {
             .get('/api/reviews')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [makeSimple(inceptionReview, inceptionFilm)]);
+                assert.deepEqual(body, [makeSimple(inceptionReview2, inceptionFilm), makeSimple(inceptionReview1, inceptionFilm)]);
             });
     });
 });
