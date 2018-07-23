@@ -76,7 +76,7 @@ const legendary = {
     }
 };
 
-describe.only('Reviewers API', () => {
+describe('Reviewers API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
     beforeEach(() => dropCollection('reviews'));
