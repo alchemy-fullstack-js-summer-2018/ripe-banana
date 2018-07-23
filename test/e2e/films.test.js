@@ -97,6 +97,7 @@ describe('Films API', () => {
                 name: studio.name
             };
         }
+        return simple;
     };
     
 
@@ -133,7 +134,7 @@ describe('Films API', () => {
         return simple;
     };
 
-    it.skip('gets all films', () => {
+    it('gets all films', () => {
         let bmovie;
         return save({ 
             title: 'B Movie film',
