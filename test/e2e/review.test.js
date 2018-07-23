@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
-// const { checkOk } = request;
+const { checkOk } = request;
 
 describe('Review API', () => {
 
@@ -41,7 +41,6 @@ describe('Review API', () => {
     });
     
     
-    
     let review;
     beforeEach(() => {
         return request
@@ -57,10 +56,36 @@ describe('Review API', () => {
             }); 
     });
 
+    const makeSimple = (review, film) => {
+        const simple = {
+            _id: review._id,
+            rating: review.rating,
+            review: review.review
+        };
+
+        if(film){
+            simple.film = {
+                _id: film._id,
+                title: film.title
+            };
+        }
+        return simple;
+    };
+
     
 
     it('saves a review', () => {
         assert.isOk(review._id);
+    });
+
+    it('returns first 100 reviews', () => {
+        return request
+            .get('/api/reviews')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [makeSimple(review, film)]);
+                
+            });
     });
 
 });
