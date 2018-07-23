@@ -58,7 +58,7 @@ const leo = {
     pob: 'Beaverton, OR'
 };
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));

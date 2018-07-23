@@ -44,15 +44,22 @@ const legendary = {
     }
 };
 
-// const inception = {
-//     title: 'Inception',
-//     studio: legendaryStudio._id,
-//     released: 2010,
-//     cast: [{
-//         role: 'Cobb',
-//         actor: leoActor._id
-//     }]
-// };
+const makeSimple = (review, film) => {
+    const simple = {
+        _id: review._id,
+        rating: review.rating,
+        review: review.review,
+    };
+
+    if(film) {
+        simple.film = {
+            _id: film._id,
+            title: film.title
+        };
+    }
+
+    return simple;
+};
 
 describe.only('Reviews API', () => {
 
@@ -119,7 +126,8 @@ describe.only('Reviews API', () => {
             .get('/api/reviews')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [inceptionReview]);
+                console.log('***POPULATED***', body);
+                assert.deepEqual(body, [makeSimple(inceptionReview, inceptionFilm)]);
             });
     });
 
