@@ -49,7 +49,7 @@ const leo = {
 };
 
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     
@@ -106,7 +106,7 @@ describe.only('Films API', () => {
             });
     });
 
-    xit('gets a single film by ID', () => {
+    it('gets a single film by ID', () => {
         return request
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
