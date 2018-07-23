@@ -15,14 +15,6 @@ function save(actor) {
         .then(({ body }) => body);
 }
 
-function saveFilm(film) {
-    return request
-        .post('/api/films')
-        .send(film)
-        .then(checkOk)
-        .then(({ body }) => body);
-}
-
 const makeSimple = (actor, films) => {
     const simple = {
         _id: actor._id,
@@ -92,16 +84,19 @@ describe.only('Actors API', () => {
     });
 
     beforeEach(() => {
-        return saveFilm({
-            title: 'Inception',
-            studio: legendaryStudio._id,
-            released: 2010,
-            cast: [{
-                role: 'Saito',
-                actor: kenActor._id
-            }]
-        })
-            .then(data => inceptionFilm = data);
+        return request
+            .post('/api/films')
+            .send({
+                title: 'Inception',
+                studio: legendaryStudio._id,
+                released: 2010,
+                cast: [{
+                    role: 'Saito',
+                    actor: kenActor._id
+                }]
+            })
+            .then(checkOk)
+            .then(({ body }) => inceptionFilm = body);
     });
 
     it('saves an actor to the database', () => {
