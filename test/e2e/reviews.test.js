@@ -15,7 +15,7 @@ let inception;
 let reviewer;
 let inceptionReview;
 
-describe.only('Reviews API', () => {
+describe.skip('Reviews API', () => {
 
     beforeEach(() => dropCollection('reviews'));
     

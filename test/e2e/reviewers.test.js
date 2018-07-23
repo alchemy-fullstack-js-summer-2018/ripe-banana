@@ -11,12 +11,56 @@ function save(reviewer) {
         .then(checkOk)
         .then(({ body }) => body); 
 }
+function saveFilm(film) {
+    return request
+        .post('/api/films')
+        .send(film)
+        .then(checkOk)
+        .then(({ body }) => body); 
+}
+function saveReview(review) {
+    return request
+        .post('/api/reviews')
+        .send(review)
+        .then(checkOk)
+        .then(({ body }) => body); 
+}
+
+const makeSimple = (reviewer, review, film) => {
+    const simple = {
+        _id: reviewer._id,
+        company: reviewer.company
+    };
+
+    if(review) {
+        simple.review = reviewer.review;
+        simple.review[0] = {
+            _id: simple.review[0]._id,
+            rating: simple.review[0].rating,
+            review: simple.review[0].review
+        };
+    }
+    
+    if(film) {
+        simple.film = {
+            _id: film._id,
+            title: film.title
+
+        };
+    }
+    return simple;
+};
+
+
+// /* eslint-disable-next-line  */
+
 
 describe.only('Reviewers API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('studios'));
 
     // function save(reviewer) {
     //     return request
@@ -26,35 +70,30 @@ describe.only('Reviewers API', () => {
     //         .then(({ body }) => body); 
     // }
 
-    const makeSimple = (reviewer, review, film) => {
-        const simple = {
-            _id: reviewer._id,
-            company: reviewer.company
-        };
     
-        if(review) {
-            simple.review = reviewer.review;
-            simple.review[0] = {
-                _id: simple.review[0]._id,
-                rating: simple.review[0].rating,
-                review: simple.review[0].review
-            };
-        }
-        
-        if(film) {
-            simple.film = {
-                _id: film._id,
-                title: film.title
 
-            };
-        }
-        return simple;
+    let universalStudio;
+    const universal = {
+        name: 'Universal Studios',
     };
+    beforeEach(() => {
+        return request
+            .post('/api/studios')
+            .send(universal)
+            .then(checkOk)
+            .then(({ body }) => {
+                console.log(body);
+                universalStudio = body;
+                inception.studio = body._id;
+            });
+            
+    });
+    
 
     let inceptionFilm;
     const inception = {
         title: 'Inception',
-        studio: inception._id,
+        studio: universalStudio._id,
         released: 2010
     };
     beforeEach(() => {
@@ -74,7 +113,9 @@ describe.only('Reviewers API', () => {
         return request
             .post('api/reviews')
             .send()
-    })
+            .then(checkOk)
+            .then(({ body }) => evaluateReview = body);
+    });
 
 
     let justinChang;
@@ -113,7 +154,10 @@ describe.only('Reviewers API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [justinChang, injoong]);
+                assert.deepEqual(body, [
+                    makeSimple(justinChang, evaluateReview, inceptionFilm),
+                    makeSimple(injoong) 
+                ]);
 
             });
     });
