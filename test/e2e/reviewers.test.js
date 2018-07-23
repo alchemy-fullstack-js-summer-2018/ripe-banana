@@ -26,27 +26,26 @@ function saveReview(review) {
         .then(({ body }) => body); 
 }
 
-const makeSimple = (reviewer, review, film) => {
+const makeSimple = (reviewer, reviews, film) => {
     const simple = {
         _id: reviewer._id,
+        name: reviewer.name,
         company: reviewer.company
     };
 
-    if(review) {
-        simple.review = reviewer.review;
-        simple.review[0] = {
-            _id: simple.review[0]._id,
-            rating: simple.review[0].rating,
-            review: simple.review[0].review
+    if(reviews) {
+        simple.reviews = reviewer.reviews;
+        simple.reviews[0] = {
+            _id: simple.reviews[0]._id,
+            rating: simple.reviews[0].rating,
+            review: simple.reviews[0].review,
+            film: {
+                _id: film._id,
+                title: film.title
+        
+            }
         };
-    }
     
-    if(film) {
-        simple.film = {
-            _id: film._id,
-            title: film.title
-
-        };
     }
     return simple;
 };
@@ -59,7 +58,7 @@ let inceptionReview;
 
 const justin = {
     name: 'Justin Chang',
-    company: 'The Hollywood Reporter' 
+    company: 'The Hollywood Reporter',
 };
 
 const leo = { 
@@ -162,8 +161,8 @@ describe.only('Reviewers API', () => {
         return request
             .get(`/api/reviewers/${justinChang._id}`)
             .then(({ body }) => {
-                console.log(body);
-                assert.deepEqual(body, justinChang);
+                justinChang = body;
+                assert.deepEqual(body, makeSimple(justinChang, inceptionReview, inceptionFilm));
             });
     });
 
@@ -180,14 +179,14 @@ describe.only('Reviewers API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, [
-                    makeSimple(justinChang, evaluateReview, inceptionFilm),
+                    makeSimple(justinChang, inceptionReview, inceptionFilm),
                     makeSimple(injoong) 
                 ]);
 
             });
     });
 
-    it.skip('updates a reviewer', () => {
+    it('updates a reviewer', () => {
         justinChang.name = 'Robert Thompson';
         return request
             .put(`/api/reviewers/${justinChang._id}`)
