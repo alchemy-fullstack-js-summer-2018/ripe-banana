@@ -45,7 +45,6 @@ describe('Review API', () => {
             });
     });
     
-    
     let review;
     beforeEach(() => {
         return request
@@ -77,8 +76,6 @@ describe('Review API', () => {
         return simple;
     };
 
-    
-
     it('saves a review', () => {
         assert.isOk(review._id);
     });
@@ -92,5 +89,4 @@ describe('Review API', () => {
                 
             });
     });
-
 });

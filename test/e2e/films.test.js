@@ -60,8 +60,7 @@ describe('Films API', () => {
             cast: [{
                 role: 'Mr. Yoon',
                 actor: actor._id
-            }]
-            
+            }]  
         })
             .then(data => {
                 film = data;
@@ -100,7 +99,6 @@ describe('Films API', () => {
         return simple;
     };
     
-
     const makeSimpleTwo = (film, studio, reviewer, review, actor) => {
        
         const simple = {
@@ -161,9 +159,7 @@ describe('Films API', () => {
                 delete body.__v;
                 delete body.reviews[0].reviewer.__v;
                 assert.deepEqual(body, makeSimpleTwo(film, studio, reviewer, review, actor));
-                
-            });
-            
+            });      
     });
 
     it('removes a film', () => {
@@ -177,9 +173,7 @@ describe('Films API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, []);
-            });
-                
-    });
-        
+            });      
+    });  
 });
 

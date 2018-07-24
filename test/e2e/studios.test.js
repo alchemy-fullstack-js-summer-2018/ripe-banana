@@ -52,7 +52,6 @@ describe('Studio API', () => {
             _id: studio._id,
             name: studio.name
         };
-
         return simple;
     };
 
@@ -93,8 +92,7 @@ describe('Studio API', () => {
             .get(`/api/studios/${studio._id}`)
             .then(({ body }) => {
                 delete body.__v;
-                assert.deepEqual(body, makeSimpleTwo(studio));
-                
+                assert.deepEqual(body, makeSimpleTwo(studio));  
             });
     });
 

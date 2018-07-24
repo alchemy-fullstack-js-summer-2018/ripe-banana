@@ -130,8 +130,6 @@ describe('Actor API', () => {
                     .then(({ body }) => {
                         assert.deepEqual(body, [actor]);
                     });
-
             });
-
     });
 });
