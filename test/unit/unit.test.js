@@ -1,6 +1,5 @@
 const { assert } = require('chai');
 const User = require('../../lib/models/user');
-const { getErrors } = require('./helpers');
 
 describe.only('Film model', () => {
     it('validates good user model', () => {
@@ -16,6 +15,7 @@ describe.only('Film model', () => {
         assert.isDefined(user.hash);
         assert.notEqual(user.hash, data.password);
 
+        assert.isUndefined(user.validateSync());
         assert.isTrue(user.comparePassword(data.password));
         assert.isFalse(user.comparePassword('bad password'));
     });
