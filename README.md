@@ -1,6 +1,4 @@
-Written by Robyn Navarro and Antreo Pukay.
-
-This is a film review API that stores reviews for films, along with cast and studios involved in the film as well as reviews. 
+This is a film review API that stores reviews for films, along with cast and studios involved in the film as well as reviews. This version includes authentication.
 
 Have installed:
 

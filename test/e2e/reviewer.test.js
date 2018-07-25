@@ -37,18 +37,24 @@ describe('Reviewer API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                assert.isDefined(body);
+                // console.log('body***', body);
+                assert.isDefined(body.token);
             });
     });
 
-    it('fails on wrong password', () => {
+    it.skip('fails on wrong password', () => {
         return request 
             .post('/api/reviewers/signin')
             .send({
                 email: 'chip@fermentedbanana.com',
                 password: 'bad'
             })
-    })
+            .then(res => {
+                console.log('***res***', res.body);
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email and/or password');
+            });
+    });
 
 //     function save(reviewer) {
 //         return request
