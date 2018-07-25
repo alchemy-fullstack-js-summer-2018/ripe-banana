@@ -35,7 +35,9 @@ describe('Films API', () => {
             .post('/api/reviewers')
             .send({ 
                 name: 'Kevin',
-                company: 'Kevin at the Movies, LLC'
+                company: 'Kevin at the Movies, LLC',
+                email: 'kevin@themovies.llc',
+                hash: '8765765'
             })
             .then(({ body }) => {
                 delete body.__v;

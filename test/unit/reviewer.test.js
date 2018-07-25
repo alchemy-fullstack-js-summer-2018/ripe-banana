@@ -9,7 +9,8 @@ describe('Reviewer model', () => {
             name: 'Bobby',
             company: 'Unemployed',
             email: 'example@example.com',
-            roles: ['admin']
+            roles: ['admin'],
+            hash: '09870987'
         };
 
         const reviewer = new Reviewer(data);
