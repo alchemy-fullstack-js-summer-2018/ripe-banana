@@ -7,7 +7,7 @@ describe('Reviewers API', () => {
 
     before(() => dropDatabase());
 
-    // let arthur, mariah;
+    let mariah;
     // let review;
     // let banks;
 
@@ -25,7 +25,7 @@ describe('Reviewers API', () => {
         return request
             .post('/api/reviewers/signup')
             .send({
-                name: 'Mariah',
+                name: 'Mariah Adams',
                 email: 'test@test.com',
                 company: 'Alchemy Movie Lab',
                 password: 'abc123'
@@ -33,6 +33,8 @@ describe('Reviewers API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 token = body.token;
+                delete body.reviewer.__v;
+                mariah = body.reviewer;
             });
     });
 
@@ -53,8 +55,8 @@ describe('Reviewers API', () => {
             .send({
                 name: 'Mariah',
                 email: 'test@test.com',
-                company: 'Alchemy Movie Lab',
-                password: 'abc123'
+                password: 'abc123',
+                company: 'Alchemy Movie Lab'
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -64,16 +66,17 @@ describe('Reviewers API', () => {
 
     /* old tests */
     it.skip('saves a reviewer', () => {
-        assert.isOk(arthur._id);
+        // assert.isOk(arthur._id);
         assert.isOk(mariah._id);
     });
 
-    it.skip('returns all reviewers on GET', () => {
+    it.only('returns all reviewers on GET', () => {
         return request
             .get('/api/reviewers')
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [arthur, mariah]);
+                assert.deepEqual(body, [mariah]);
             });
     });
 

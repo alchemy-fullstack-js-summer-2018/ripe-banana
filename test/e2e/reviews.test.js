@@ -22,15 +22,25 @@ describe('Reviews API', () => {
             .then(({ body }) => {
                 token = body.token;
             });
-    });
-
+        });
+        
     let mariahReview;
     const data = {
         rating: 5,
-        // reviewer: Types.ObjectId(),
         review: 'Tom Hanks is the best!',
         film: Types.ObjectId(),
     }
+        
+    // let banks;
+    // let mariahReview, arthurReview;
+    
+    // before(() => {
+    //     return saveAll()
+    //         .then(data => {
+    //             banks = data.films[0];
+    //             [mariahReview, arthurReview] = data.reviews;
+    //         });
+    // });
 
     beforeEach(() => {
         return request
@@ -52,19 +62,8 @@ describe('Reviews API', () => {
                 assert.equal(res.body.error, 'Invalid or missing token');
             })
     });
-    
-    // let banks;
-    // let mariahReview, arthurReview;
-    
-    // before(() => {
-    //     return saveAll()
-    //         .then(data => {
-    //             banks = data.films[0];
-    //             [mariahReview, arthurReview] = data.reviews;
-    //         });
-    // });
 
-    it.only('saves a review', () => {
+    it('saves a review', () => {
         assert.isOk(mariahReview._id);
         // assert.isOk(arthurReview._id);
     });
