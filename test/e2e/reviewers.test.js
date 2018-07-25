@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe('Reviewer API', () => {
+describe.only('Reviewer API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -20,6 +20,22 @@ describe('Reviewer API', () => {
             .then(checkOk)
             .then(({ body }) => body);
     }
+
+    let token; 
+    beforeEach(() => {
+        return request
+            .post('/api/reviewer/signup')
+            .send({
+                name: 'Easton',
+                company: 'Life',
+                email: 'easton@portland.com',
+                password: 'adamngoodone',
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     let bobby;
     beforeEach(() => {
@@ -97,6 +113,10 @@ describe('Reviewer API', () => {
         }
         return simple;
     };
+
+    it('signs up a user', () => {
+        assert.isDefined(token);
+    }); 
 
     it('saves a reviewer', () => {
         assert.isOk(bobby._id);
