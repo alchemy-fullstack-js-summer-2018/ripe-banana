@@ -7,10 +7,10 @@ const justin = {
     password: 'iLurvMoviez'
 };
 
-// const bobby = {
-//     email: 'bobby@variety.com',
-//     password: 'iLurvMoviez'
-// };
+const badJustin = {
+    email: 'jchang@variety.com',
+    password: 'ilikemoviez'
+};
 
 
 describe.only('Auth API', () => {
@@ -45,6 +45,16 @@ describe.only('Auth API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.isDefined(body.token);
+            });
+    });
+
+    it('fails on wrong password', () => {
+        return request
+            .post('/api/auth/signin')
+            .send(badJustin)
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email or password');
             });
     });
 });
