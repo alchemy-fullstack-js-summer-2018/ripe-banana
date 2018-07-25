@@ -2,9 +2,8 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { Types } = require('mongoose');
 
-describe.only('Review API', () => {
+describe('Review API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -13,8 +12,8 @@ describe.only('Review API', () => {
         dropCollection('studios');
     });
 
-    //let reviewer;
     let token;
+    let kevin;
     beforeEach(() => {
         return request
             .post('/api/reviewers/signup')
@@ -25,8 +24,8 @@ describe.only('Review API', () => {
                 password: 'kevin'
             })
             .then(({ body }) => {
-                console.log('********', body);
                 token = body.token;
+                kevin = body.reviewer;
             });
     });
 
@@ -59,7 +58,7 @@ describe.only('Review API', () => {
             .set('Authorization', token)
             .send({
                 rating: 4,
-                reviewer: Types.ObjectId(),
+                reviewer: kevin._id,
                 review: 'Kevin says this is the 2nd best Injoong movie out there.',
                 film: film._id,
             })
@@ -85,7 +84,7 @@ describe.only('Review API', () => {
         return simple;
     };
 
-    it.only('saves a review', () => {
+    it('saves a review', () => {
         assert.isOk(review._id);
     });
 
@@ -95,7 +94,6 @@ describe.only('Review API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, [makeSimple(review, film)]);
-                
             });
     });
 });

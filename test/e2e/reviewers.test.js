@@ -32,10 +32,7 @@ describe('Reviewer API', () => {
                 password: 'adamngoodone',
             })
             .then(checkOk)
-            .then(({ body }) => {
-                console.log('BODY!!!!', body.token);
-                token = body.token;
-            });
+            .then(({ body }) => token = body.token);
     });
 
     // let bobby;
@@ -123,7 +120,7 @@ describe('Reviewer API', () => {
     //     assert.isDefined(token);
     // });
 
-    it.only('can sign in a user', () => {
+    it('can sign in a user', () => {
         return request
             .post('/api/reviewers/signin')
             .send({

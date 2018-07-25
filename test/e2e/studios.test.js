@@ -3,9 +3,24 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe('Studio API', () => {
+describe.only('Studio API', () => {
 
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('reviewers'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/reviewers/signup')
+            .send({ 
+                name: 'Marty',
+                company: 'ACL',
+                email: 'marty@portland.com',
+                password: 'marty',
+                roles: ['admin']
+            })
+            .then(({ body }) => token = body.token);
+    });
 
     function save(studio) {
         return request
@@ -103,6 +118,7 @@ describe('Studio API', () => {
             .then(() => {
                 return request
                     .delete(`/api/studios/${acl._id}`)
+                    .set('Authorization', token)
                     .then(checkOk)
                     .then(res => {
                         assert.deepEqual(res.body, { removed: true });
