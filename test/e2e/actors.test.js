@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
+const { verify } = require('../../lib/util/token-service');
 
 const makeSimple = (actor, films) => {
     const simple = {
@@ -22,11 +23,17 @@ const makeSimple = (actor, films) => {
     return simple;
 };
 
+let token;
 let inceptionFilm;
 let legendaryStudio;
 let kenActor;
 let ellenActor;
 
+let injoong = {
+    email: 'injoong@email.com',
+    password: '1234',
+    roles: ['admin']
+};
 const legendary = {
     name: 'Legendary',
     address: {
@@ -48,9 +55,24 @@ const ellen = {
     pob: 'Gresham, OR'
 };
 
-describe('Actors API', () => {
+describe.only('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('users'));
+
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send(injoong)
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+                verify(token)
+                    .then((body) => {
+                        injoong._id = body.id;
+                    });
+            });
+    });
 
     beforeEach(() => {
         return request
@@ -112,6 +134,7 @@ describe('Actors API', () => {
         kenActor.pob = 'Boston, MA';
         return request
             .put(`/api/actors/${kenActor._id}`)
+            .set('Authorization', token)
             .send(kenActor)
             .then((({ body }) => {
                 assert.deepEqual(body, kenActor);
