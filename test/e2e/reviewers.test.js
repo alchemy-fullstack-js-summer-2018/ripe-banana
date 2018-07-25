@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe('Reviewer API', () => {
+describe.only('Reviewer API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -88,6 +88,7 @@ describe('Reviewer API', () => {
             hash: reviewer.hash
 
         };
+
         if(review){
             simple.reviews = [{
                 _id: review._id,
