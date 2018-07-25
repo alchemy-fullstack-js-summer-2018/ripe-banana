@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk } = request;
 
-describe.only('Auth API', () => {
+describe('Auth API', () => {
     beforeEach(() => dropDatabase('users'));
 
     let token;

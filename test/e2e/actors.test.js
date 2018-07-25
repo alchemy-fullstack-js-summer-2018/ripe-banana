@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, saveActorData, makeSimple } = request;
 
 describe('Actors API', () => {
 
@@ -13,7 +13,7 @@ describe('Actors API', () => {
     let banks;
 
     before(() => {
-        return saveAll()
+        return saveActorData()
             .then(data => {
                 [tom, rachel, emma] = data.actors;
                 banks = data.films[0];
