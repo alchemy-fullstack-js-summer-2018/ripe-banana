@@ -23,11 +23,11 @@ describe.only('Reviews API', () => {
     });
 
     let mariahReview;
-    it('saves a review', () => {
+    beforeEach(() => {
 
         const data = {
             rating: 5,
-            reviewer: Types.ObjectId(),
+            // reviewer: Types.ObjectId(),
             review: 'Tom Hanks is the best!',
             film: Types.ObjectId(),
         };
