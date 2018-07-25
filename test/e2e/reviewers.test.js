@@ -1,41 +1,53 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { Types } = require('mongoose');
 
 describe('Reviewers API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
+
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: []
+        };
+        return save(data, 'films')
+            .then(body => {
+                banks = body;
+            });
+    });
 
     let mariah;
-    // let review;
-    // let banks;
-
-    // before(() => {
-    //     return saveAll()
-    //         .then(data => {
-    //             [arthur, mariah] = data.reviewers;
-    //             review = data.reviews[1];
-    //             banks = data.films[0];
-    //         });
-    // });
-
     let token;
     beforeEach(() => {
-        return request
-            .post('/api/reviewers/signup')
-            .send({
-                name: 'Mariah Adams',
-                email: 'test@test.com',
-                company: 'Alchemy Movie Lab',
-                password: 'abc123'
-            })
-            .then(checkOk)
-            .then(({ body }) => {
+        const data = {
+            name: 'Mariah Adams',
+            email: 'test@test.com',
+            company: 'Alchemy Movie Lab',
+            password: 'abc123'
+        }
+        return save(data, 'reviewers/signup')
+            .then(body => {
                 token = body.token;
                 delete body.reviewer.__v;
                 mariah = body.reviewer;
             });
+    });
+
+    let review;
+    beforeEach(() => {
+        const data = {
+            rating: 5,
+            review: 'Tom Hanks is the best!',
+            film: banks._id
+        }
+        return saveWithAuth(data, 'reviews', token)
+            .then(body => review = body);
     });
 
     it('signs up a user', () => {
@@ -53,7 +65,7 @@ describe('Reviewers API', () => {
         return request
             .post('/api/reviewers/signin')
             .send({
-                name: 'Mariah',
+                name: 'Mariah Adams',
                 email: 'test@test.com',
                 password: 'abc123',
                 company: 'Alchemy Movie Lab'
@@ -64,13 +76,7 @@ describe('Reviewers API', () => {
             });
     });
 
-    /* old tests */
-    it.skip('saves a reviewer', () => {
-        // assert.isOk(arthur._id);
-        assert.isOk(mariah._id);
-    });
-
-    it.only('returns all reviewers on GET', () => {
+    it('returns all reviewers on GET', () => {
         return request
             .get('/api/reviewers')
             .set('Authorization', token)
@@ -80,31 +86,32 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.skip('returns a reviewer on GET', () => {
+    it.only('returns a reviewer on GET', () => {
         return request
-            .get(`/api/reviewers/${arthur._id}`)
+            .get(`/api/reviewers/${mariah._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                arthur.reviews = [{
+                console.log('review', review);
+                mariah.reviews = [{
                     _id: review._id,
                     rating: review.rating,
                     review: review.review,
                     film: makeSimple(banks)
                 }];
-                assert.deepEqual(body, arthur);
+                assert.deepEqual(body, mariah);
             });
     });
 
-    it.skip('updates a reviewer', () => {
-        arthur.company = 'Netflix';
+    it('updates a reviewer', () => {
+        mariah.company = 'Netflix';
         return request
-            .put(`/api/reviewers/${arthur._id}`)
-            .send(arthur)
+            .put(`/api/reviewers/${mariah._id}`)
+            .send(mariah)
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
-                delete arthur.reviews;
-                assert.deepEqual(body, arthur);
+                delete mariah.reviews;
+                assert.deepEqual(body, mariah);
             });
     });
 });

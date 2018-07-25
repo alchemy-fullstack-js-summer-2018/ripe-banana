@@ -24,6 +24,7 @@ describe('Reviews API', () => {
             });
         });
         
+    let banks;
     let mariahReview;
     const data = {
         rating: 5,
@@ -31,7 +32,6 @@ describe('Reviews API', () => {
         film: Types.ObjectId(),
     }
         
-    // let banks;
     // let mariahReview, arthurReview;
     
     // before(() => {
@@ -65,7 +65,6 @@ describe('Reviews API', () => {
 
     it('saves a review', () => {
         assert.isOk(mariahReview._id);
-        // assert.isOk(arthurReview._id);
     });
 
     it.skip('returns all reviews on GET', () => {
