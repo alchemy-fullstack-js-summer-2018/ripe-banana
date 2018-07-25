@@ -49,7 +49,7 @@ const makeSimple = (review, film) => {
     return simple;
 };
 
-describe.only('Reviews API', () => {
+describe('Reviews API', () => {
 
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
