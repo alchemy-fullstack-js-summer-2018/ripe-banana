@@ -144,6 +144,7 @@ describe.only('Actors API', () => {
     it('removes an actor by ID', () => {
         return request
             .delete(`/api/actors/${ellenActor._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(() => {
                 return request.get('/api/actors');
