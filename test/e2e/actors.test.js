@@ -95,6 +95,7 @@ describe('Actors API', () => {
     beforeEach(() => {
         return request
             .post('/api/studios')
+            .set('Authorization', token)
             .send(legendary)
             .then(checkOk)
             .then(({ body }) => legendaryStudio = body);
