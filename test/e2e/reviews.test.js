@@ -13,7 +13,8 @@ let token;
 
 let justinChang = {
     email: 'justin@email.com',
-    password: 'justin'
+    password: 'justin',
+    roles: ['admin']
 };
 
 const leo = { 
@@ -107,7 +108,7 @@ describe('Reviews API', () => {
             review: 'It was great',
             film: inceptionFilm._id,
             createdAt: new Date('2009-11-11')
-        })
+        }, token)
             .then(data => inceptionReview1 = data);
     });
     beforeEach(() => {
@@ -117,7 +118,7 @@ describe('Reviews API', () => {
             review: 'It was meh',
             film: inceptionFilm._id,
             createdAt: new Date('2016-10-17')
-        })
+        }, token)
             .then(data => inceptionReview2 = data);
     });
 

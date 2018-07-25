@@ -68,7 +68,8 @@ const leo = {
 
 let justinChang = {
     email: 'justin@email.com',
-    password: 'justin'
+    password: 'justin',
+    roles: ['admin']
 };
 
 describe('Films API', () => {
@@ -129,7 +130,7 @@ describe('Films API', () => {
             film: inceptionFilm._id,
             createdAt: new Date(),
             updatedAt: new Date()
-        })
+        }, token)
             .then(data => inceptionReview = data);
     });
 
