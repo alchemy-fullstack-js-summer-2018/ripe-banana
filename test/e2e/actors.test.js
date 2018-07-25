@@ -160,7 +160,9 @@ describe.only('Actors API', () => {
             .get(`/api/actors/${kenActor._id}`)
             .then(checkOk)
             .then(() => {
-                return request.delete(`/api/actors/${kenActor._id}`);
+                return request
+                    .delete(`/api/actors/${kenActor._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
