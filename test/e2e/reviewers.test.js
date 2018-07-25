@@ -18,6 +18,7 @@ describe('Reviewer API', () => {
             .post('/api/reviewers')
             .send(reviewer)
             .then(checkOk)
+            
             .then(({ body }) => body);
     }
 
@@ -123,7 +124,9 @@ describe('Reviewer API', () => {
                 return request.get('/api/reviewers');  
             })
             .then(checkOk)
+            
             .then(({ body }) => {
+                delete body.__v;
                 assert.deepEqual(body, [bobby, carrie]);
             });
     });
