@@ -27,7 +27,7 @@ describe('Reviews API', () => {
     let mariahReview;
     const data = {
         rating: 5,
-        reviewer: Types.ObjectId(),
+        // reviewer: Types.ObjectId(),
         review: 'Tom Hanks is the best!',
         film: Types.ObjectId(),
     }
@@ -38,11 +38,11 @@ describe('Reviews API', () => {
             .set('Authorization', token)
             .send(data)
             .then(({ body }) => {
-                mariahReview = body; 
+                mariahReview = body;
             });
     });
 
-    it.only('returns error if posting without valid token', () => {
+    it('returns error if posting without valid token', () => {
         return request
             .post('/api/reviews')
             .set('Authorization', 'bad token')
@@ -64,7 +64,7 @@ describe('Reviews API', () => {
     //         });
     // });
 
-    it('saves a review', () => {
+    it.only('saves a review', () => {
         assert.isOk(mariahReview._id);
         // assert.isOk(arthurReview._id);
     });
