@@ -63,7 +63,7 @@ let user = {
     roles: []
 };
 
-describe.only('Actors API', () => {
+describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('users'));
@@ -113,6 +113,7 @@ describe.only('Actors API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Inception',
                 studio: legendaryStudio._id,
