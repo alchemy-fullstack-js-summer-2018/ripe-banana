@@ -5,32 +5,97 @@ const { checkOk, save, saveWithAuth, makeSimple } = request;
 
 describe('Films API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
-    let tom, emma;
-    let banks, gameNight;
-    let warner, disney;
-    let mariah, arthur;
-    let reviewMariah, reviewArthur;
-
-    before(() => {
-        return saveAll()
-            .then(data => {
-                [tom,, emma] = data.actors;
-                [arthur, mariah] = data.reviewers;
-                [warner, disney] = data.studios;
-                [banks, gameNight] = data.films;
-                [reviewMariah, reviewArthur] = data.reviews;
+    let mariah;
+    let token;
+    beforeEach(() => {
+        const data = {
+            name: 'Mariah Adams',
+            email: 'test@test.com',
+            company: 'Alchemy Movie Lab',
+            password: 'abc123',
+            roles: ['admin']
+        }
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
+                delete body.reviewer.__v;
+                mariah = body.reviewer;
             });
     });
 
+    let tom;
+    let emma;
+    beforeEach(() => {
+        const data = {
+            name: 'Tom Hanks',
+            dob: new Date(1956, 6, 9),
+            pob: 'Concord, CA'
+        }
+        return saveWithAuth(data, 'actors', token)
+            .then(body => tom = body);
+    });
+
+    beforeEach(() => {
+        const data = {
+            name: 'Emma Thompson',
+            dob: new Date(1959, 3, 15),
+            pob: 'London, England'
+        }
+        return saveWithAuth(data, 'actors', token)
+            .then(body => emma = body);
+    });
+
+    let disney;
+    beforeEach(() => {
+        const data = {
+            name: 'Disney',
+            address: {
+                city: 'Burbank',
+                state: 'California',
+                country: 'USA'
+            } 
+        };
+        return saveWithAuth(data, 'studios', token)
+            .then(body => disney = body);
+    });
+
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: disney._id,
+            released: 2013,
+            cast: [
+                {
+                    role: 'Walt Disney',
+                    actor: tom._id
+                },
+                {
+                    role: 'P.L. Travers',
+                    actor: emma._id
+                }
+            ]
+        };
+        return saveWithAuth(data, 'films', token)
+            .then(body => banks = body);
+    });
+
+    let review;
+    beforeEach(() => {
+        const data = {
+            rating: 5,
+            review: 'Tom Hanks is the best!',
+            film: banks._id
+        }
+        return saveWithAuth(data, 'reviews', token)
+            .then(body => review = body);
+    });
 
     it('saves films', () => {
         assert.isOk(banks._id);
         assert.equal(banks.title, 'Saving Mr. Banks');
-        assert.isOk(gameNight._id);
-        assert.equal(gameNight.title, 'Game Night');
-
     });
 
     it('returns a film on GET', () => {
@@ -57,16 +122,10 @@ describe('Films API', () => {
                     ],
                     reviews: [
                         {
-                            _id: reviewMariah._id,
-                            rating: reviewMariah.rating,
-                            review: reviewMariah.review,
+                            _id: review._id,
+                            rating: review.rating,
+                            review: review.review,
                             reviewer: makeSimple(mariah)
-                        },
-                        {
-                            _id: reviewArthur._id,
-                            rating: reviewArthur.rating,
-                            review: reviewArthur.review,
-                            reviewer: makeSimple(arthur)
                         }
                     ]
                 });
@@ -84,19 +143,14 @@ describe('Films API', () => {
                     released: banks.released,
                     studio: makeSimple(disney)
                 };
-                gameNight = {
-                    _id: gameNight._id,
-                    title: gameNight.title,
-                    released: gameNight.released,
-                    studio: makeSimple(warner)
-                };
-                assert.deepEqual(body, [banks, gameNight]);
+                assert.deepEqual(body, [banks]);
             });
     });
 
     it('Removes a film on DELETE', () => {
         return request
             .delete(`/api/films/${banks._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
