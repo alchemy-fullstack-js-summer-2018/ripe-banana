@@ -3,7 +3,7 @@ const User = require('../../lib/models/user');
 const { Types } = require('mongoose');
 const { getErrors } = require('./helpers');
 
-describe.only('User model', () => {
+describe('User model', () => {
     it('validates good user model', () => {
         const data = {
             email: 'arthur@gmail.com',

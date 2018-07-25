@@ -1,3 +1,4 @@
+const { Types } = require('mongoose');
 module.exports = {
     studios: [
         {
@@ -47,22 +48,22 @@ module.exports = {
     films: [
         {
             title: 'Saving Mr. Banks',
-            // studio: disney._id,
+            studio: Types.ObjectId(),
             released: 2013,
             cast: [
                 {
                     role: 'Walt Disney',
-                    // actor: tom._id
+                    actor: Types.ObjectId()
                 },
                 {
                     role: 'P.L. Travers',
-                    // actor: emma._id
+                    actor: Types.ObjectId()
                 }
             ]
         },
         {
             title: 'Game Night',
-            // studio: warner._id,
+            studio: Types.ObjectId(),
             released: 2018,
             cast: []
         }
@@ -70,15 +71,15 @@ module.exports = {
     reviews: [
         {
             rating: 5,
-            // reviewer: mariah._id,
+            reviewer: Types.ObjectId(),
             review: 'Tom Hanks is the best!',
-            // film: banks._id,
+            film: Types.ObjectId()
         },
         {
             rating: 1,
-            // reviewer: arthur._id,
+            reviewer: Types.ObjectId(),
             review: 'Haven\'t even seen the movie...',
-            // film: banks._id,
+            film: Types.ObjectId()
         }
     ]
 };

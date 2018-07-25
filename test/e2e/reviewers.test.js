@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, saveReviewersData, makeSimple } = request;
 
-describe.only('Reviewers API', () => {
+describe('Reviewers API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -57,6 +57,38 @@ describe.only('Reviewers API', () => {
             });
     });
 
+    it.only('verifies a token', () => {
+        return request
+            .get('/api/reviewers/verify')
+            .set('Authorization', token)
+            .then(checkOk);
+    });
+
+    it('fails on wrong password', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'arthur@gmail.com',
+                password: 'bad'
+            })
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email or password');
+            });
+    });
+
+    it('cannot signup with same email', () => {
+        return request
+            .post('/api/reviewers/signup')
+            .send({
+                email: 'arthur@gmail.com',
+                password: 'bad'
+            })
+            .then(res => {
+                assert.equal(res.status, 400);
+                assert.equal(res.body.error, 'Email is already registered');
+            });
+    });
 
     it.skip('returns all reviewers on GET', () => {
         return request
@@ -66,6 +98,7 @@ describe.only('Reviewers API', () => {
                 assert.deepEqual(body, [arthur, mariah]);
             });
     });
+
 
     it.skip('returns a reviewer on GET', () => {
         return request
