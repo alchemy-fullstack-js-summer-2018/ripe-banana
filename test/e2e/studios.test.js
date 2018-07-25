@@ -1,25 +1,55 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
 
 describe('Studios API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
-    let warner, disney;
-    let banks, gameNight;
-
-    before(() => {
-        return saveAll()
-            .then(data => {
-                [warner, disney] = data.studios;
-                [banks, gameNight] = data.films;
+    let mariah;
+    let token;
+    beforeEach(() => {
+        const data = {
+            name: 'Mariah Adams',
+            email: 'test@test.com',
+            company: 'Alchemy Movie Lab',
+            password: 'abc123',
+            roles: ['admin']
+        }
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
             });
-    });    
+    });
 
-    it('saves a studio', () => {
-        assert.isOk(warner._id);
+    let disney;
+    beforeEach(() => {
+        const data = {
+            name: 'Disney',
+            address: {
+                city: 'Burbank',
+                state: 'California',
+                country: 'USA'
+            } 
+        };
+        return saveWithAuth(data, 'studios', token)
+            .then(body => disney = body);
+    });
+    
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: disney._id,
+            released: 2013,
+            cast: []
+        };
+        return save(data, 'films')
+            .then(body => banks = body);
+    });
+
+    it.only('saves a studio', () => {
         assert.isOk(disney._id);
     });
 
