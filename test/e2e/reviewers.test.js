@@ -86,12 +86,11 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.only('returns a reviewer on GET', () => {
+    it('returns a reviewer on GET', () => {
         return request
             .get(`/api/reviewers/${mariah._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                console.log('review', review);
                 mariah.reviews = [{
                     _id: review._id,
                     rating: review.rating,
