@@ -37,5 +37,7 @@ describe.only('Reviewer model', () => {
         const errors = getErrors(tyrone.validateSync(), 4);
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
+        assert.equal(errors.email.kind, 'required');
+        assert.equal(errors.hash.kind, 'required');
     });
 });
