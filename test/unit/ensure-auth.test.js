@@ -2,9 +2,10 @@ const { assert } = require('chai');
 const createEnsureAuth = require('../../lib/util/ensure-auth');
 const tokenService = require('../../lib/util/token-service');
 
-describe('Ensure auth middleware', () => {
+describe.only('Ensure auth middleware', () => {
+    
     const user = { _id: 456 };
-    let token;
+    let token = '';
     beforeEach(() => {
         return tokenService.sign(user)
             .then(t => token = t);
