@@ -13,26 +13,27 @@ describe('Reviews API', () => {
     let banks;
     beforeEach(() => {
         const data = {
-            title: 'Saving Mr. Banks',
-            studio: Types.ObjectId(),
-            released: 2013,
-            cast: []
-        };
-        return save(data, 'films')
-            .then(body => banks = body);
-    });
-
-    beforeEach(() => {
-        const data = {
             name: 'Arthur Jen',
             email: 'arthur@gmail.com',
             password: 'whatever',
-            company: 'Alchemy Movie Lab'
+            company: 'Alchemy Movie Lab',
+            roles: ['admin']
         };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;
             });
+    });
+
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: []
+        };
+        return saveWithAuth(data, 'films', token)
+            .then(body => banks = body);
     });
 
     let review;

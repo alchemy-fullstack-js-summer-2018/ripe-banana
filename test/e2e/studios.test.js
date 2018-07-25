@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, save, saveWithAuth, makeSimple } = request;
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -45,17 +45,9 @@ describe.only('Studios API', () => {
             released: 2013,
             cast: []
         };
-        return save(data, 'films')
+        return saveWithAuth(data, 'films', token)
             .then(body => banks = body);
     });
-
-    // beforeEach(() => {
-    //     return saveStudioData()
-    //         .then(data => {
-    //             [warner, disney] = data.studios;
-    //             banks = data.films[0];
-    //         });
-    // });    
 
     it('saves a studio', () => {
         assert.isOk(disney._id);

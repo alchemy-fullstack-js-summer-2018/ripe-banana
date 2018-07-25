@@ -1,30 +1,72 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveActorData, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { Types } = require('mongoose');
 
-describe('Actors API', () => {
+describe.only('Actors API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
+
+    let token;
+    beforeEach(() => {
+        const data = {
+            name: 'Arthur Jen',
+            email: 'arthur@gmail.com',
+            password: 'whatever',
+            company: 'Alchemy Movie Lab',
+            roles: ['admin']
+        };
+        return save(data, 'reviewers/signup')
+            .then(body => token = body.token);
+    });
 
     let tom;
-    let rachel;
-    let emma;
-    let banks;
+    beforeEach(() => {
+        const data = {
+            name: 'Tom Hanks',
+            dob: new Date(1956, 6, 9),
+            pob: 'Concord, CA'
+        };
+        return saveWithAuth(data, 'actors', token)
+            .then(body => tom = body);
+    });
 
-    before(() => {
-        return saveActorData()
-            .then(data => {
-                [tom, rachel, emma] = data.actors;
-                banks = data.films[0];
-            });
+    let emma;
+    beforeEach(() => {
+        const data = {
+            name: 'Emma Thompson',
+            dob: new Date(1959, 3, 15),
+            pob: 'London, England'
+        };
+        return save(data, 'actors', token)
+            .then(body => emma = body);
+    });
+
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: [
+                {
+                    role: 'Walt Disney',
+                    actor: tom._id
+                },
+                {
+                    role: 'P.L. Travers',
+                    actor: emma._id
+                }
+            ]
+        };
+        return saveWithAuth(data, 'films', token)
+            .then(body => banks = body);
     });
 
     it('saves an actor', () => {
         assert.isOk(tom._id);
         assert.equal(tom.name, 'Tom Hanks');
-        assert.isOk(rachel._id);
-        assert.equal(rachel.name, 'Rachel McAdams');
         assert.isOk(emma._id);
         assert.equal(emma.name, 'Emma Thompson');
     });
@@ -51,7 +93,6 @@ describe('Actors API', () => {
             .then(({ body }) => {
                 assert.deepEqual(body, [
                     makeSimple(tom),
-                    makeSimple(rachel),
                     makeSimple(emma)
                 ]);
             });
@@ -61,6 +102,7 @@ describe('Actors API', () => {
         tom.pob = 'Los Angeles, CA';
         return request
             .put(`/api/actors/${tom._id}`)
+            .set('Authorization', token)
             .send(tom)
             .then(checkOk)
             .then(({ body }) => {
@@ -73,6 +115,7 @@ describe('Actors API', () => {
     it('DOES NOT remove an actor if they exist as a property of a film', () => {
         return request
             .delete(`/api/actors/${tom._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isFalse(body.removed);
@@ -82,11 +125,13 @@ describe('Actors API', () => {
     it('deletes an actor', () => {
         return request
             .del(`/api/films/${banks._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
                 return request
-                    .del(`/api/actors/${tom._id}`);
+                    .del(`/api/actors/${tom._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
