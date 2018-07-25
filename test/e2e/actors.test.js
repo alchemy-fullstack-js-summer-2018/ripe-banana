@@ -83,18 +83,19 @@ describe.only('Actors API', () => {
     });
 
     beforeEach(() => {
-        return save('actors', ken)
+        return save('actors', ken, token)
             .then(data => kenActor = data);
     });
 
     beforeEach(() => {
-        return save('actors', ellen)
+        return save('actors', ellen, token)
             .then(data => ellenActor = data);
     });
 
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Inception',
                 studio: legendaryStudio._id,
