@@ -1,6 +1,8 @@
 const { assert } = require('chai');
 const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
+const { verify } = require('../../lib/util/token-service');
+
 
 const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null) => {
     const simple = {
@@ -36,17 +38,17 @@ const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null)
             review: reviews.review,
             reviewer: {
                 _id: reviewer._id,
-                name: reviewer.name
+                email: reviewer.email
             }
         };
     }
     return simple;
 };
 
+let token;
 let inceptionFilm;
 let legendaryStudio;
 let leoActor;
-let justinChang;
 let inceptionReview;
 
 const legendary = {
@@ -64,9 +66,9 @@ const leo = {
     pob: 'Beaverton, OR'
 };
 
-const justin = {
-    name: 'Justin Chang',
-    company: 'The Hollywood Reporter'
+let justinChang = {
+    email: 'justin@email.com',
+    password: 'justin'
 };
 
 describe('Films API', () => {
@@ -74,7 +76,7 @@ describe('Films API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
-    beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => dropCollection('users'));
     
     beforeEach(() => {
         return request
@@ -94,10 +96,16 @@ describe('Films API', () => {
 
     beforeEach(() => {
         return request
-            .post('/api/reviewers')
-            .send(justin)
+            .post('/api/auth/signup')
+            .send(justinChang)
             .then(checkOk)
-            .then(({ body }) => justinChang = body);
+            .then(({ body }) => {
+                token = body.token;
+                verify(token)
+                    .then((body) => {
+                        justinChang._id = body.id;
+                    });
+            });
     });
 
     beforeEach(() => {

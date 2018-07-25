@@ -1,17 +1,19 @@
 const { assert } = require('chai');
 const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
+const { verify } = require('../../lib/util/token-service');
 
 let leoActor;
 let legendaryStudio;
-let justinChang;
+// let justinChang;
 let inceptionFilm;
 let inceptionReview1;
 let inceptionReview2;
+let token;
 
-const justin = {
-    name: 'Justin Chang',
-    company: 'The Hollywood Reporter' 
+let justinChang = {
+    email: 'justin@email.com',
+    password: 'justin'
 };
 
 const leo = { 
@@ -53,7 +55,7 @@ describe('Reviews API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('users'));
 
     beforeEach(() => {
         return request
@@ -73,10 +75,16 @@ describe('Reviews API', () => {
 
     beforeEach(() => {
         return request
-            .post('/api/reviewers')
-            .send(justin)
+            .post('/api/auth/signup')
+            .send(justinChang)
             .then(checkOk)
-            .then(({ body }) => justinChang = body);
+            .then(({ body }) => {
+                token = body.token;
+                verify(token)
+                    .then((body) => {
+                        justinChang._id = body.id;
+                    });
+            });
     });
 
     beforeEach(() => {
