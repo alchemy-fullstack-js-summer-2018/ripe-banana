@@ -84,7 +84,8 @@ describe('Reviewer API', () => {
             name: reviewer.name,
             company: reviewer.company,
             roles: reviewer.roles,
-            email: reviewer.email
+            email: reviewer.email,
+            hash: reviewer.hash
 
         };
         if(review){
