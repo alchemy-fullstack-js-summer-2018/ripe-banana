@@ -3,13 +3,13 @@ const { request, checkOk } = require('./request');
 const { dropCollection } = require('./db');
 
 const user = {
-    email: 'jchang@variety.com',
+    email: 'bobby@variety.com',
     password: 'iLurvMoviez'
 };
 
-let token;
 
 describe.only('Auth API', () => {
+    let token;
     beforeEach(() => dropCollection('users'));
 
     beforeEach(() => {
@@ -17,7 +17,9 @@ describe.only('Auth API', () => {
             .post('/api/auth/signup')
             .send(user)
             .then(checkOk)
-            .then(({ body }) => token = body.token);
+            .then(({ body }) => {
+                token = body.token;
+            });
     });
 
     it('signs up a user', () => {
