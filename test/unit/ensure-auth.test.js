@@ -27,4 +27,17 @@ describe.only('ensure auth middleware', () => {
 
         ensureAuth(req, null, next);
     });
+
+    it('calls next with error when token is bad', done => {
+        const req = {
+            get() { return 'bad token'; }
+        };
+
+        const next = err => {
+            assert.equal(err.code, 401);
+            done();
+        };
+
+        ensureAuth(req, null, next);
+    });
 });
