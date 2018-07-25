@@ -55,7 +55,7 @@ const ellen = {
     pob: 'Gresham, OR'
 };
 
-describe.only('Actors API', () => {
+describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('users'));
