@@ -24,6 +24,62 @@ const save = (data, resource) => {
         });
 };
 
+request.saveStudioData = () => {
+    let warner, disney;
+    return save(data.studios, 'studios')
+        .then(saved => {
+            data.studios = saved;
+            [warner, disney] = saved;
+            data.films[0].studio = disney._id;
+            data.films[1].studio = warner._id;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            return data;
+        });
+};
+
+request.saveActorData = () => {
+    let tom, emma;
+    return save(data.actors, 'actors')
+        .then(saved => {
+            data.actors = saved;
+            [tom,, emma] = saved;
+            data.films[0].cast[0].actor = tom._id;
+            data.films[0].cast[1].actor = emma._id;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            return data;
+        });
+};
+
+request.saveReviewerData = () => {
+    let arthur, mariah;
+    let banks;
+    return save(data.reviewers, 'reviewers')
+        .then(saved => {
+            data.reviewers = saved;
+            [arthur, mariah] = saved;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            banks = saved[0];
+            data.reviews[0].reviewer = mariah._id;
+            data.reviews[0].film = banks._id;
+            data.reviews[1].reviewer = arthur._id;
+            data.reviews[1].film = banks._id;
+            return save(data.reviews, 'reviews');
+        })
+        .then(saved => {
+            data.reviews = saved;
+            return data;
+        });
+};
+
 request.saveAll = () => {
     let tom, emma;
     let warner, disney;
