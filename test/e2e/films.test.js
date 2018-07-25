@@ -72,29 +72,13 @@ let justinChang = {
     roles: ['admin']
 };
 
-describe('Films API', () => {
+describe.only('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('users'));
     
-    beforeEach(() => {
-        return request
-            .post('/api/studios')
-            .send(legendary)
-            .then(checkOk)
-            .then(({ body }) => legendaryStudio = body);
-    });
-
-    beforeEach(() => {
-        return request
-            .post('/api/actors')
-            .send(leo)
-            .then(checkOk)
-            .then(({ body }) => leoActor = body);
-    });
-
     beforeEach(() => {
         return request
             .post('/api/auth/signup')
@@ -110,6 +94,25 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
+        return request
+            .post('/api/studios')
+            .set('Authorization', token)
+            .send(legendary)
+            .then(checkOk)
+            .then(({ body }) => legendaryStudio = body);
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/actors')
+            .set('Authorization', token)
+            .send(leo)
+            .then(checkOk)
+            .then(({ body }) => leoActor = body);
+    });
+
+
+    beforeEach(() => {
         return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
@@ -118,7 +121,7 @@ describe('Films API', () => {
                 role: 'Cobb',
                 actor: leoActor._id
             }]
-        })
+        }, token)
             .then(data => inceptionFilm = data);
     });
 
@@ -144,13 +147,14 @@ describe('Films API', () => {
             title: 'Dunkirk',
             studio: legendaryStudio._id,
             released: 2017,
-        })
+        }, token)
             .then(data => {
                 dunkirkFilm = data;
                 return request.get('/api/films');
             })
             .then(checkOk)
             .then(({ body }) => {
+                console.log('***CONSOLE LOG***', body);
                 assert.deepEqual(body, [
                     makeSimple(inceptionFilm, legendaryStudio),
                     makeSimple(dunkirkFilm, legendaryStudio)
@@ -170,6 +174,7 @@ describe('Films API', () => {
     it('deletes a film', () => {
         return request
             .delete(`/api/films/${inceptionFilm._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: true });
             });

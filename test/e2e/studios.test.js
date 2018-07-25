@@ -54,7 +54,7 @@ const netflix = {
     }
 };
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('films'));
