@@ -2,15 +2,24 @@ const { createServer } = require('http');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
+const { assert } = chai;
 
 const app = require('../../lib/app');
 const server = createServer(app);
 const request = chai.request(server).keepOpen();
 
 request.checkOk = res => {
-    if(res.status !== 200) throw new Error('Expected 200 http status code');
+    assert.equal(res.status, 200, 'Expected 200 http status code');
     return res;
 };
+
+request.getToken = () => request
+    .post('/api/auth/signup')
+    .send({
+        email: 'me@me.com',
+        password: '123'
+    })
+    .then(({ body }) => body.token);
 
 after(done => server.close(done));
 
