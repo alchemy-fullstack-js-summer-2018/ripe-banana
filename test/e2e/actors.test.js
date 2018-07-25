@@ -4,7 +4,7 @@ const { dropDatabase } = require('./_db');
 const { checkOk, save, saveWithAuth, makeSimple } = request;
 const { Types } = require('mongoose');
 
-describe.only('Actors API', () => {
+describe('Actors API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -39,7 +39,7 @@ describe.only('Actors API', () => {
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
         };
-        return save(data, 'actors', token)
+        return saveWithAuth(data, 'actors', token)
             .then(body => emma = body);
     });
 
