@@ -23,7 +23,7 @@ describe('Reviews API', () => {
                 token = body.token;
             });
     });
-    
+
     let mariahReview;
     const data = {
         rating: 5,
@@ -42,8 +42,15 @@ describe('Reviews API', () => {
             });
     });
 
-    it('returns error if posting without valid token', () => {
-        
+    it.only('returns error if posting without valid token', () => {
+        return request
+            .post('/api/reviews')
+            .set('Authorization', 'bad token')
+            .send({})
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid or missing token');
+            })
     });
     
     // let banks;
@@ -57,7 +64,7 @@ describe('Reviews API', () => {
     //         });
     // });
 
-    it.only('saves a review', () => {
+    it('saves a review', () => {
         assert.isOk(mariahReview._id);
         // assert.isOk(arthurReview._id);
     });
