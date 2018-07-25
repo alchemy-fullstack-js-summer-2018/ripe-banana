@@ -7,7 +7,9 @@ describe('Reviewer model', () => {
     it('validates a good model', () => {
         const data = {
             name: 'Bobby',
-            company: 'Unemployed'
+            company: 'Unemployed',
+            email: 'example@example.com',
+            roles: ['admin']
         };
 
         const reviewer = new Reviewer(data);
@@ -19,8 +21,10 @@ describe('Reviewer model', () => {
 
     it('validates that a name and company is required', () => {
         const reviewer = new Reviewer({});
-        const errors = getErrors(reviewer.validateSync(), 2);
+        const errors = getErrors(reviewer.validateSync(), 4);
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
+        assert.equal(errors.email.kind, 'required');
+        assert.equal(errors.hash.kind, 'required');
     });
 });
