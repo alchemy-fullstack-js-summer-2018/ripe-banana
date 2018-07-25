@@ -40,7 +40,14 @@ describe.only('Reviews API', () => {
     });
 
     it('returns error if posting without valid token', () => {
-
+        return request
+            .post('/api/reviews')
+            .set('Authorization', 'bad-token')
+            .send({})
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid or missing token');
+            });
     });
 
     // let banks;
