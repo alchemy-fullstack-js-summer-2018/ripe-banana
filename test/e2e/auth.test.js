@@ -26,7 +26,7 @@ describe.only('Auth API', () => {
         assert.isDefined(token);
     });
     
-    it.skip('Verifies a token', () => {
+    it('Verifies a token', () => {
         return request
             .get('/api/auth/verify')
             .set('Authorization', token)
