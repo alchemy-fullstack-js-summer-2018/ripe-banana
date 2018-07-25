@@ -25,11 +25,6 @@ module.exports = {
             pob: 'Concord, CA'
         },
         {
-            name: 'Rachel McAdams',
-            dob: new Date(1978, 10, 17),
-            pob: 'London, Canada'
-        },
-        {
             name: 'Emma Thompson',
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
@@ -38,10 +33,14 @@ module.exports = {
     reviewers: [
         {
             name: 'Arthur Jen',
+            email: 'arthur@gmail.com',
+            password: 'whatever',
             company: 'Alchemy Movie Lab'
         },
         {
             name: 'Mariah Adams',
+            email: 'mariah@gmail.com',
+            password: 'something',
             company: 'The Train Spotters'
         }
     ],
@@ -60,12 +59,6 @@ module.exports = {
                     actor: Types.ObjectId()
                 }
             ]
-        },
-        {
-            title: 'Game Night',
-            studio: Types.ObjectId(),
-            released: 2018,
-            cast: []
         }
     ],
     reviews: [
@@ -73,12 +66,6 @@ module.exports = {
             rating: 5,
             reviewer: Types.ObjectId(),
             review: 'Tom Hanks is the best!',
-            film: Types.ObjectId()
-        },
-        {
-            rating: 1,
-            reviewer: Types.ObjectId(),
-            review: 'Haven\'t even seen the movie...',
             film: Types.ObjectId()
         }
     ]

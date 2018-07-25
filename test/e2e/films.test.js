@@ -61,12 +61,6 @@ describe('Films API', () => {
                             rating: reviewMariah.rating,
                             review: reviewMariah.review,
                             reviewer: makeSimple(mariah)
-                        },
-                        {
-                            _id: reviewArthur._id,
-                            rating: reviewArthur.rating,
-                            review: reviewArthur.review,
-                            reviewer: makeSimple(arthur)
                         }
                     ]
                 });

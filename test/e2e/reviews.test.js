@@ -4,7 +4,7 @@ const { dropDatabase } = require('./_db');
 const { checkOk, saveAll, makeSimple } = request;
 const { Types } = require('mongoose');
 
-describe.only('Reviews API', () => {
+describe('Reviews API', () => {
 
     beforeEach(() => dropDatabase());
     let token;
@@ -27,7 +27,6 @@ describe.only('Reviews API', () => {
 
         const data = {
             rating: 5,
-            // reviewer: Types.ObjectId(),
             review: 'Tom Hanks is the best!',
             film: Types.ObjectId(),
         };

@@ -16,13 +16,25 @@ request.checkOk = res => {
     return res;
 };
 
-const save = (data, resource) => {
+request.save = (data, resource) => {
     return request
         .post(`/api/${resource}`)
         .send(data)
         .then(this.checkOk)
         .then(({ body }) => {
-            body.forEach(n => delete n.__v);
+            delete body.__v;
+            return body;
+        });
+};
+
+request.saveWithAuth = (data, resource, token) => {
+    return request
+        .post(`/api/${resource}`)
+        .set('Authorization', token)
+        .send(data)
+        .then(this.checkOk)
+        .then(({ body }) => {
+            delete body.__v;
             return body;
         });
 };
@@ -61,25 +73,21 @@ request.saveActorData = () => {
 };
 
 request.saveReviewerData = () => {
-    let arthur, mariah;
-    let banks;
-    return save(data.reviewers, 'reviewers')
+    let token, banks;
+    return save(data.reviewers[1], 'reviewers/signup')
         .then(saved => {
-            data.reviewers = saved;
-            [arthur, mariah] = saved;
-            return save(data.films, 'films'); 
+            data.reviewers[1] = saved.reviewer;
+            token = saved.token;
+            return save(data.films[0], 'films'); 
         })
         .then(saved => {
-            data.films = saved;
-            banks = saved[0];
-            data.reviews[0].reviewer = mariah._id;
+            data.films[0] = saved;
+            banks = saved;
             data.reviews[0].film = banks._id;
-            data.reviews[1].reviewer = arthur._id;
-            data.reviews[1].film = banks._id;
-            return save(data.reviews, 'reviews');
+            return saveWithAuth(data.reviews[0], 'reviews', token);
         })
         .then(saved => {
-            data.reviews = saved;
+            data.reviews[0] = saved;
             return data;
         });
 };

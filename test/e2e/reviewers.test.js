@@ -1,30 +1,43 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveReviewersData, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { Types } = require('mongoose');
 
-describe('Reviewers API', () => {
+describe.only('Reviewers API', () => {
 
     beforeEach(() => dropDatabase());
 
-    // let arthur, mariah;
+    // let mariah;
     // let review;
     // let banks;
 
     // before(() => {
-    //     return saveReviewersData()
+    //     return saveReviewerData()
     //         .then(data => {
-    //             [arthur, mariah] = data.reviewers;
-    //             review = data.reviews[1];
+    //             [mariah] = data.reviewers;
+    //             review = data.reviews[0];
     //             banks = data.films[0];
     //         });
     // });
 
     // it('saves a reviewer', () => {
-    //     assert.isOk(arthur._id);
     //     assert.isOk(mariah._id);
     // });
     let token;
+    let arthur;
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: []
+        };
+        return save(data, 'films')
+            .then(body => banks = body);
+    });
+
     beforeEach(() => {
         const data = {
             name: 'Arthur Jen',
@@ -32,11 +45,23 @@ describe('Reviewers API', () => {
             password: 'whatever',
             company: 'Alchemy Movie Lab'
         };
-        return request
-            .post('/api/reviewers/signup')
-            .send(data)
-            .then(checkOk)
-            .then(({ body }) => token = body.token);
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
+                delete body.reviewer.__v;
+                arthur = body.reviewer;
+            });
+    });
+
+    let review;
+    beforeEach(() => {
+        const data = {
+            rating: 5,
+            review: 'Tom Hanks is the best!',
+            film: banks._id
+        };
+        return saveWithAuth(data, 'reviews', token)
+            .then(body => review = body);
     });
     
     
@@ -90,21 +115,22 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.skip('returns all reviewers on GET', () => {
+    it('returns all reviewers on GET', () => {
         return request
             .get('/api/reviewers')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [arthur, mariah]);
+                assert.deepEqual(body, [arthur]);
             });
     });
 
 
-    it.skip('returns a reviewer on GET', () => {
+    it('returns a reviewer on GET', () => {
         return request
             .get(`/api/reviewers/${arthur._id}`)
             .then(checkOk)
             .then(({ body }) => {
+                console.log(review);
                 arthur.reviews = [{
                     _id: review._id,
                     rating: review.rating,
@@ -115,7 +141,7 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.skip('updates a reviewer', () => {
+    it('updates a reviewer', () => {
         arthur.company = 'Netflix';
         return request
             .put(`/api/reviewers/${arthur._id}`)
