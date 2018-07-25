@@ -57,4 +57,14 @@ describe.only('Auth API', () => {
                 assert.equal(res.body.error, 'Invalid email or password');
             });
     });
+
+    it('cannot signup with same email', () => {
+        return request
+            .post('/api/auth/signup')
+            .send(justin)
+            .then(res => {
+                assert.equal(res.status, 400);
+                assert.equal(res.body.error, 'Email already in use');
+            });
+    });
 });
