@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
 
 describe('Films API', () => {
 

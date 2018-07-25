@@ -3,11 +3,10 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, save, saveWithAuth, makeSimple } = request;
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropDatabase());
 
-    let mariah;
     let token;
     beforeEach(() => {
         const data = {
@@ -45,7 +44,7 @@ describe.only('Studios API', () => {
             released: 2013,
             cast: []
         };
-        return save(data, 'films')
+        return saveWithAuth(data, 'films', token)
             .then(body => banks = body);
     });
 

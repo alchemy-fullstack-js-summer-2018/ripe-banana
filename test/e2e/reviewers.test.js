@@ -8,6 +8,24 @@ describe('Reviewers API', () => {
 
     beforeEach(() => dropDatabase());
 
+    let mariah;
+    let token;
+    beforeEach(() => {
+        const data = {
+            name: 'Mariah Adams',
+            email: 'test@test.com',
+            company: 'Alchemy Movie Lab',
+            password: 'abc123',
+            roles: ['admin']
+        }
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
+                delete body.reviewer.__v;
+                mariah = body.reviewer;
+            });
+    });
+
     let banks;
     beforeEach(() => {
         const data = {
@@ -19,23 +37,6 @@ describe('Reviewers API', () => {
         return save(data, 'films')
             .then(body => {
                 banks = body;
-            });
-    });
-
-    let mariah;
-    let token;
-    beforeEach(() => {
-        const data = {
-            name: 'Mariah Adams',
-            email: 'test@test.com',
-            company: 'Alchemy Movie Lab',
-            password: 'abc123'
-        }
-        return save(data, 'reviewers/signup')
-            .then(body => {
-                token = body.token;
-                delete body.reviewer.__v;
-                mariah = body.reviewer;
             });
     });
 
