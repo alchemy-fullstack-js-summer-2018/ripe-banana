@@ -1,25 +1,63 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveStudioData, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
 
-describe('Studios API', () => {
+describe.only('Studios API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
-    let warner, disney;
-    let banks, gameNight;
 
-    before(() => {
-        return saveStudioData()
-            .then(data => {
-                [warner, disney] = data.studios;
-                [banks, gameNight] = data.films;
+    let token;
+    beforeEach(() => {
+        const data = {
+            name: 'Arthur Jen',
+            email: 'arthur@gmail.com',
+            password: 'whatever',
+            company: 'Alchemy Movie Lab',
+            roles: ['admin']
+        };
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
             });
-    });    
+    });
+
+    let disney;
+    beforeEach(() => {
+        const data = {
+            name: 'Disney',
+            address: {
+                city: 'Burbank',
+                state: 'California',
+                country: 'USA'
+            } 
+        };
+        return saveWithAuth(data, 'studios', token)
+            .then(body => disney = body);
+    });
+
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: disney._id,
+            released: 2013,
+            cast: []
+        };
+        return save(data, 'films')
+            .then(body => banks = body);
+    });
+
+    // beforeEach(() => {
+    //     return saveStudioData()
+    //         .then(data => {
+    //             [warner, disney] = data.studios;
+    //             banks = data.films[0];
+    //         });
+    // });    
 
     it('saves a studio', () => {
-        assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
 
@@ -42,16 +80,15 @@ describe('Studios API', () => {
             .get('/api/studios')
             .then(checkOk)
             .then(({ body }) => {
-                delete warner.address;
                 delete disney.address;
-                delete disney.films;
-                assert.deepEqual(body, [warner, disney]);
+                assert.deepEqual(body, [disney]);
             });
     });
 
     it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
-            .delete(`/api/studios/${warner._id}`)
+            .delete(`/api/studios/${disney._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isFalse(body.removed);
@@ -60,12 +97,14 @@ describe('Studios API', () => {
 
     it('Removes a studio on DELETE', () => {
         return request
-            .delete(`/api/films/${gameNight._id}`)
+            .delete(`/api/films/${banks._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
                 return request
-                    .delete(`/api/studios/${warner._id}`);
+                    .delete(`/api/studios/${disney._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {

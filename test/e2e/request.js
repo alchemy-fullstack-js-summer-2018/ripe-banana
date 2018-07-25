@@ -16,7 +16,7 @@ request.checkOk = res => {
     return res;
 };
 
-request.save = (data, resource) => {
+request.save = function(data, resource) {
     return request
         .post(`/api/${resource}`)
         .send(data)
@@ -27,7 +27,7 @@ request.save = (data, resource) => {
         });
 };
 
-request.saveWithAuth = (data, resource, token) => {
+request.saveWithAuth = function(data, resource, token) {
     return request
         .post(`/api/${resource}`)
         .set('Authorization', token)
@@ -40,15 +40,14 @@ request.saveWithAuth = (data, resource, token) => {
 };
 
 
-request.saveStudioData = () => {
+request.saveStudioData = function() {
     let warner, disney;
-    return save(data.studios, 'studios')
+    return request.save(data.studios, 'studios')
         .then(saved => {
             data.studios = saved;
             [warner, disney] = saved;
             data.films[0].studio = disney._id;
-            data.films[1].studio = warner._id;
-            return save(data.films, 'films'); 
+            return request.save(data.films, 'films'); 
         })
         .then(saved => {
             data.films = saved;
@@ -56,15 +55,15 @@ request.saveStudioData = () => {
         });
 };
 
-request.saveActorData = () => {
+request.saveActorData = function() {
     let tom, emma;
-    return save(data.actors, 'actors')
+    return request.save(data.actors, 'actors')
         .then(saved => {
             data.actors = saved;
-            [tom,, emma] = saved;
+            [tom, emma] = saved;
             data.films[0].cast[0].actor = tom._id;
             data.films[0].cast[1].actor = emma._id;
-            return save(data.films, 'films'); 
+            return request.save(data.films, 'films'); 
         })
         .then(saved => {
             data.films = saved;
@@ -72,19 +71,19 @@ request.saveActorData = () => {
         });
 };
 
-request.saveReviewerData = () => {
+request.saveReviewerData = function() {
     let token, banks;
-    return save(data.reviewers[1], 'reviewers/signup')
+    return this.save(data.reviewers[1], 'reviewers/signup')
         .then(saved => {
             data.reviewers[1] = saved.reviewer;
             token = saved.token;
-            return save(data.films[0], 'films'); 
+            return this.save(data.films[0], 'films'); 
         })
         .then(saved => {
             data.films[0] = saved;
             banks = saved;
             data.reviews[0].film = banks._id;
-            return saveWithAuth(data.reviews[0], 'reviews', token);
+            return this.saveWithAuth(data.reviews[0], 'reviews', token);
         })
         .then(saved => {
             data.reviews[0] = saved;
@@ -92,21 +91,21 @@ request.saveReviewerData = () => {
         });
 };
 
-request.saveAll = () => {
+request.saveAll = function() {
     let tom, emma;
     let warner, disney;
     let arthur, mariah;
     let banks;
-    return save(data.actors, 'actors')
+    return this.save(data.actors, 'actors')
         .then((saved) => {
             data.actors = saved;
             [tom,, emma] = saved;
-            return save(data.studios, 'studios');
+            return this.save(data.studios, 'studios');
         })
         .then(saved => {
             data.studios = saved;
             [warner, disney] = saved;
-            return save(data.reviewers, 'reviewers');
+            return this.save(data.reviewers, 'reviewers');
         })
         .then(saved => {
             data.reviewers = saved;
@@ -115,7 +114,7 @@ request.saveAll = () => {
             data.films[0].cast[0].actor = tom._id;
             data.films[0].cast[1].actor = emma._id;
             data.films[1].studio = warner._id;
-            return save(data.films, 'films');
+            return this.save(data.films, 'films');
         })
         .then(saved => {
             data.films = saved;
@@ -124,7 +123,7 @@ request.saveAll = () => {
             data.reviews[0].film = banks._id;
             data.reviews[1].reviewer = arthur._id;
             data.reviews[1].film = banks._id;
-            return save(data.reviews, 'reviews');
+            return this.save(data.reviews, 'reviews');
         })
         .then(saved => {
             data.reviews = saved;

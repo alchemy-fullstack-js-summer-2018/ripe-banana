@@ -1,13 +1,27 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, save, saveWithAuth, makeSimple } = request;
 const { Types } = require('mongoose');
+
 
 describe('Reviews API', () => {
 
     beforeEach(() => dropDatabase());
+    
     let token;
+    let banks;
+    beforeEach(() => {
+        const data = {
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: []
+        };
+        return save(data, 'films')
+            .then(body => banks = body);
+    });
+
     beforeEach(() => {
         const data = {
             name: 'Arthur Jen',
@@ -15,28 +29,23 @@ describe('Reviews API', () => {
             password: 'whatever',
             company: 'Alchemy Movie Lab'
         };
-        return request
-            .post('/api/reviewers/signup')
-            .send(data)
-            .then(checkOk)
-            .then(({ body }) => token = body.token);
+        return save(data, 'reviewers/signup')
+            .then(body => {
+                token = body.token;
+            });
     });
 
-    let mariahReview;
+    let review;
     beforeEach(() => {
-
         const data = {
             rating: 5,
             review: 'Tom Hanks is the best!',
-            film: Types.ObjectId(),
+            film: banks._id
         };
-        return request
-            .post('/api/reviews')
-            .set('Authorization', token)
-            .send(data)
-            .then(checkOk)
-            .then(({ body }) => mariahReview = body);
+        return saveWithAuth(data, 'reviews', token)
+            .then(body => review = body);
     });
+    
 
     it('returns error if posting without valid token', () => {
         return request
@@ -49,40 +58,22 @@ describe('Reviews API', () => {
             });
     });
 
-    // let banks;
-    // let mariahReview, arthurReview;
-    
-    // before(() => {
-    //     return saveAll()
-    //         .then(data => {
-    //             banks = data.films[0];
-    //             [mariahReview, arthurReview] = data.reviews;
-    //         });
-    // });
-
     it('saves a review', () => {
-        assert.isOk(mariahReview._id);
-        // assert.isOk(arthurReview._id);
+        assert.isOk(review._id);
     });
 
-    it.skip('returns all reviews on GET', () => {
+    it('returns all reviews on GET', () => {
         return request
             .get('/api/reviews')
             .then(checkOk)
             .then(({ body }) => {
-                mariahReview = {
-                    _id: mariahReview._id,
-                    rating: mariahReview.rating,
-                    review: mariahReview.review,
+                review = {
+                    _id: review._id,
+                    rating: review.rating,
+                    review: review.review,
                     film: makeSimple(banks)
                 };
-                arthurReview = {
-                    _id: arthurReview._id,
-                    rating: arthurReview.rating,
-                    review: arthurReview.review,
-                    film: makeSimple(banks)
-                };
-                assert.deepEqual(body, [mariahReview, arthurReview]);
+                assert.deepEqual(body, [review]);
             });
     });
 

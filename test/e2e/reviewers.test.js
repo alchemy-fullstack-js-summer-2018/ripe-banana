@@ -4,26 +4,10 @@ const { dropDatabase } = require('./_db');
 const { checkOk, save, saveWithAuth, makeSimple } = request;
 const { Types } = require('mongoose');
 
-describe.only('Reviewers API', () => {
+describe('Reviewers API', () => {
 
     beforeEach(() => dropDatabase());
-
-    // let mariah;
-    // let review;
-    // let banks;
-
-    // before(() => {
-    //     return saveReviewerData()
-    //         .then(data => {
-    //             [mariah] = data.reviewers;
-    //             review = data.reviews[0];
-    //             banks = data.films[0];
-    //         });
-    // });
-
-    // it('saves a reviewer', () => {
-    //     assert.isOk(mariah._id);
-    // });
+    
     let token;
     let arthur;
     let banks;
