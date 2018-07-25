@@ -3,9 +3,9 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, saveReviewersData, makeSimple } = request;
 
-describe('Reviewers API', () => {
+describe.only('Reviewers API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
     // let arthur, mariah;
     // let review;
@@ -25,7 +25,7 @@ describe('Reviewers API', () => {
     //     assert.isOk(mariah._id);
     // });
     let token;
-    it.only('signs up a user', () => {
+    beforeEach(() => {
         const data = {
             name: 'Arthur Jen',
             email: 'arthur@gmail.com',
@@ -38,6 +38,25 @@ describe('Reviewers API', () => {
             .then(checkOk)
             .then(({ body }) => token = body.token);
     });
+    
+    
+    it('signs up a user', () => {
+        assert.isDefined(token);
+    });
+
+    it('signs in a user', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'arthur@gmail.com',
+                password: 'whatever'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
+    });
+
 
     it.skip('returns all reviewers on GET', () => {
         return request
