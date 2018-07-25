@@ -9,8 +9,8 @@ This is an optional assignment to use the aggregation pipeline feature of mongod
 
 route | data
 ---|---
-`GET /films` | [{ title, released, studio.name, averageRating }]
-`GET /films/top` | [{ title, released, studio.name, averageRating }] - top 10 sorted by highest rating
+`GET /films` | [{ title, released, studioName, averageRating }]
+`GET /films/top` | [{ title, released, studioName, averageRating }] - top 10 sorted by highest rating
 `GET /actors` | [{ name, movieCount }]
 `GET /reviewer` | [{ name, company, countOfReviews, averageReview }]
 
