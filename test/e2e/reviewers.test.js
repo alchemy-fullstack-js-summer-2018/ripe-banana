@@ -27,7 +27,7 @@ describe('Reviewer API', () => {
             name: 'Bobby',
             company: 'Unemployed',
             email: 'bobby@unemployed.org',
-            roles: 'reviewer',
+            roles: ['reviewer'],
             hash: '98769876'
         })
             .then(data => bobby = data);
@@ -132,7 +132,6 @@ describe('Reviewer API', () => {
         return request
             .get(`/api/reviewers/${bobby._id}`)
             .then(({ body }) => {
-                delete body.__v;
                 assert.deepEqual(body, makeSimple(bobby, review, film));
             });
     });
