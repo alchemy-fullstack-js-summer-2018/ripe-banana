@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe('Films API', () => {
+describe.only('Films API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -13,10 +13,29 @@ describe('Films API', () => {
         dropCollection('studios');
     });
 
+    let token;
+    let reviewer;
+    beforeEach(() => {
+        return request
+            .post('/api/reviewers/signup')
+            .send({ 
+                name: 'Easton',
+                company: 'ACL',
+                email: 'easton@portland.com',
+                password: 'adamngoodone',
+                roles: ['admin']
+            })
+            .then(({ body }) => {
+                token = body.token;
+                reviewer = body.reviewer;
+            });
+    });
+
     function save(film) {
         return request
             .post('/api/films')
             .send(film)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => body);
     }
@@ -25,22 +44,9 @@ describe('Films API', () => {
     beforeEach(() => {
         return request  
             .post('/api/studios')
+            .set('Authorization', token)
             .send({ name: 'SortaGood Pictures' })
             .then(({ body }) => studio = body);
-    });
-
-    let reviewer;
-    beforeEach(() => {
-        return request
-            .post('/api/reviewers')
-            .send({ 
-                name: 'Kevin',
-                company: 'Kevin at the Movies, LLC'
-            })
-            .then(({ body }) => {
-                delete body.__v;
-                reviewer = body;
-            });
     });
 
     let actor;
@@ -48,6 +54,7 @@ describe('Films API', () => {
         return request
             .post('/api/actors')
             .send({ name: 'Arthur' })
+            .set('Authorization', token)
             .then(({ body }) => actor = body);
     });
 
@@ -71,17 +78,13 @@ describe('Films API', () => {
     beforeEach(() => {
         return request  
             .post('/api/reviews')
+            .set('Authorization', token)
             .send({ 
                 rating: 5,
                 reviewer: reviewer._id,
                 review: 'Another great Injoong Flick!',
                 film: film._id })
             .then(({ body }) => review = body);
-    });
-
-    it('saves a film', () => {
-        assert.isOk(film._id);
-        
     });
 
     const makeSimple = (film, studio) => {
@@ -98,7 +101,7 @@ describe('Films API', () => {
         }
         return simple;
     };
-    
+
     const makeSimpleTwo = (film, studio, reviewer, review, actor) => {
        
         const simple = {
@@ -131,6 +134,11 @@ describe('Films API', () => {
         }
         return simple;
     };
+
+    it('saves a film', () => {
+        assert.isOk(film._id);
+        
+    });
 
     it('gets all films', () => {
         let bmovie;
@@ -165,6 +173,7 @@ describe('Films API', () => {
     it('removes a film', () => {
         return request
             .delete(`/api/films/${film._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(res => {
                 assert.deepEqual(res.body, { removed: true });

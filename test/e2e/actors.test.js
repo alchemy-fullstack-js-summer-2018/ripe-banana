@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe.only('Actor API', () => {
+describe('Actor API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
