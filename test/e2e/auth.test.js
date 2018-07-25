@@ -7,9 +7,14 @@ const justin = {
     password: 'iLurvMoviez'
 };
 
-const badJustin = {
+const badPassword = {
     email: 'jchang@variety.com',
     password: 'ilikemoviez'
+};
+
+const badEmail = {
+    email: 'jchg@variety.com',
+    password: 'iLurvMoviez'
 };
 
 
@@ -51,7 +56,7 @@ describe.only('Auth API', () => {
     it('fails on wrong password', () => {
         return request
             .post('/api/auth/signin')
-            .send(badJustin)
+            .send(badPassword)
             .then(res => {
                 assert.equal(res.status, 401);
                 assert.equal(res.body.error, 'Invalid email or password');
@@ -65,6 +70,16 @@ describe.only('Auth API', () => {
             .then(res => {
                 assert.equal(res.status, 400);
                 assert.equal(res.body.error, 'Email already in use');
+            });
+    });
+
+    it('gives 404 on bad email signin', () => {
+        return request
+            .post('/api/auth/signin')
+            .send(badEmail)
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email or password');
             });
     });
 });
