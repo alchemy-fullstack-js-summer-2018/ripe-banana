@@ -130,7 +130,6 @@ describe.only('Reviewers API', () => {
             .get(`/api/reviewers/${arthur._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                console.log(review);
                 arthur.reviews = [{
                     _id: review._id,
                     rating: review.rating,
