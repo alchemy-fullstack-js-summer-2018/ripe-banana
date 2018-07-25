@@ -12,17 +12,6 @@ function saveReview(review) {
         });
 }
 
-function saveReviewer(reviewer) {
-    return request
-        .post('/api/reviewers')
-        .send(reviewer)
-        .then(checkOk)
-        .then(({ body }) => {
-            delete body.__v;
-            return body;
-        });
-}
-
 function saveFilm(film) {
     return request
         .post('/api/films')
@@ -150,7 +139,6 @@ module.exports = {
     saveActor,
     saveFilm,
     saveReview,
-    saveReviewer,
     saveStudio,
     makeFilm,
     makeFilm2,

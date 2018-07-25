@@ -4,7 +4,7 @@ const { dropCollection } = require('./db');
 
 const { checkOk } = request;
 
-describe.only('Auth API', () => {
+describe('Auth API', () => {
 
     beforeEach(() => dropCollection('users'));
 
@@ -46,7 +46,7 @@ describe.only('Auth API', () => {
             });
     });
 
-    it('Fails on wrong pasword', () => {
+    it('Fails on wrong password', () => {
         return request
             .post('/api/auth/signin')
             .send({

@@ -2,13 +2,24 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveReview, saveReviewer, saveStudio, makeFilm, makeFilm2 } = require('./_helpers');
+const { saveActor, saveFilm, saveReview, saveStudio, makeFilm, makeFilm2 } = require('./_helpers');
 
 describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+
+    function saveReviewer(reviewer) {
+        return request
+            .post('/api/reviewers')
+            .send(reviewer)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
+    }
 
     let ebert;
     beforeEach(() => {

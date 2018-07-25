@@ -2,7 +2,7 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveReview, saveReviewer, saveStudio, makeReviewer } = require('./_helpers');
+const { saveActor, saveFilm, saveReview, saveStudio, makeReviewer } = require('./_helpers');
 
 describe('Reviewers API', () => {
 
@@ -11,6 +11,32 @@ describe('Reviewers API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'me@me.com',
+                password: '123'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
+
+    function saveReviewer(reviewer) {
+        return request
+            .post('/api/reviewers')
+            .set('Authorization', token)
+            .send(reviewer)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
+    }
 
     let kevin;
     beforeEach(() => {
@@ -89,7 +115,9 @@ describe('Reviewers API', () => {
         })
             .then(_mario => {
                 mario = _mario;
-                return request.get('/api/reviewers');
+                return request
+                    .get('/api/reviewers')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -100,6 +128,7 @@ describe('Reviewers API', () => {
     it('Gets a reviewer by id', () => {
         return request
             .get(`/api/reviewers/${kevin._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, makeReviewer(kevin, review1, avengers));
             });
@@ -110,6 +139,7 @@ describe('Reviewers API', () => {
         kevin.name = 'John Reviewer';
         return request
             .put(`/api/reviewers/${kevin._id}`)
+            .set('Authorization', token)
             .send(kevin)
             .then(checkOk)
             .then(({ body }) => {
