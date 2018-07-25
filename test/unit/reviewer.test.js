@@ -9,22 +9,24 @@ describe('Reviewer Model', () => {
         const data = {
             name: 'Justin Chang',
             company: 'The Hollywood Reporter',
-            email: 'email@.email.com',
+            email: 'justin@.email.com',
             password: 'pwd123',
             roles: []
         };
      
         const reviewer = new Reviewer(data);
 
-        // const json = reviewer.toJSON();
-        // delete json._id;
-        // assert.deepEqual(json, data);
         assert.equal(reviewer.email, data.email);
         assert.isUndefined(reviewer.password, 'password should not be set');
 
         reviewer.generateHash(data.password);
         assert.isDefined(reviewer.hash, 'hash is defined');
         assert.notEqual(reviewer.hash, data.password, 'hash not same as password');
+
+        assert.isUndefined(reviewer.validateSync());
+
+        assert.isTrue(reviewer.comparePassword(data.password), 'compare good password');
+        assert.isFalse(reviewer.comparePassword('bad password'), 'compare bad password');
 
     });
 
@@ -33,5 +35,8 @@ describe('Reviewer Model', () => {
         const errors = getErrors(reviewer.validateSync(), 2);
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
+        assert.equal(errors.email.kind, 'required');
+        assert.equal(errors.hash.kind, 'required');
+
     });
 });
