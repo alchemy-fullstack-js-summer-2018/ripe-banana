@@ -9,7 +9,7 @@ const data = {
     roles: [] 
 };
 
-describe.only('User Model', () => {
+describe('User Model', () => {
 
     it('validates initial model', () => {
         const user = new User(data);
