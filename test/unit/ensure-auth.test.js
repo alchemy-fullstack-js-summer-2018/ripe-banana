@@ -3,7 +3,7 @@ const createEnsureAuth = require('../../lib/util/ensure-auth');
 const tokenService = require('../../lib/util/token-service');
 
 describe.only('Ensure auth middleware', () => {
-    
+
     const user = { _id: 456 };
     let token = '';
     beforeEach(() => {
@@ -27,4 +27,14 @@ describe.only('Ensure auth middleware', () => {
         ensureAuth(req, null, next);
     });
 
+    it('Calls next with error when token is bad', done => {
+        const req = {
+            get() { return 'bad-token'; }
+        };
+        const next = err => {
+            assert.equal(err.code, 401);
+            done();
+        };
+        ensureAuth(req, null, next);
+    });
 });
