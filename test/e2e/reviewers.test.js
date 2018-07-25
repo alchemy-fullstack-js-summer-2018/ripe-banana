@@ -25,7 +25,10 @@ describe('Reviewer API', () => {
     beforeEach(() => {
         return save({
             name: 'Bobby',
-            company: 'Unemployed'
+            company: 'Unemployed',
+            email: 'bobby@unemployed.org',
+            roles: 'reviewer',
+            hash: '98769876'
         })
             .then(data => bobby = data);
     });
@@ -79,7 +82,10 @@ describe('Reviewer API', () => {
         const simple = {
             _id: reviewer._id,
             name: reviewer.name,
-            company: reviewer.company
+            company: reviewer.company,
+            roles: reviewer.roles,
+            email: reviewer.email
+
         };
         if(review){
             simple.reviews = [{
@@ -106,7 +112,9 @@ describe('Reviewer API', () => {
         let carrie;
         return save({ 
             name: 'carrie',
-            company: 'Student'
+            company: 'Student',
+            email: 'carrie@student.edu',
+            hash: 'q234523'
         })
             .then(_carrie => {
                 carrie = _carrie;

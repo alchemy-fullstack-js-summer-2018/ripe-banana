@@ -18,7 +18,10 @@ describe('Review API', () => {
             .post('/api/reviewers')
             .send({ 
                 name: 'Kevin',
-                company: 'Kevin at the Movies, LLC'
+                company: 'Kevin at the Movies, LLC',
+                email: 'kevin@themovies.com',
+                roles: ['admin'],
+                hash: '09870987'
             })
             .then(({ body }) => reviewer = body);
     });
