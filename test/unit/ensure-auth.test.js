@@ -3,7 +3,7 @@ const createEnsureAuth = require('../../lib/util/ensure-auth');
 const tokenService = require('../../lib/util/token-service');
 require('dotenv').config();
 
-describe.only('Ensure auth middleware', () => {
+describe('Ensure auth middleware', () => {
     const user = { _id: 123 };
     let token = '';
     beforeEach(() => {

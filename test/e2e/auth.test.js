@@ -2,10 +2,15 @@ const { assert } = require('chai');
 const { request, checkOk } = require('./request');
 const { dropCollection } = require('./db');
 
-const user = {
-    email: 'bobby@variety.com',
+const justin = {
+    email: 'jchang@variety.com',
     password: 'iLurvMoviez'
 };
+
+// const bobby = {
+//     email: 'bobby@variety.com',
+//     password: 'iLurvMoviez'
+// };
 
 
 describe.only('Auth API', () => {
@@ -15,7 +20,7 @@ describe.only('Auth API', () => {
     beforeEach(() => {
         return request
             .post('/api/auth/signup')
-            .send(user)
+            .send(justin)
             .then(checkOk)
             .then(({ body }) => {
                 token = body.token;
@@ -31,5 +36,15 @@ describe.only('Auth API', () => {
             .get('/api/auth/verify')
             .set('Authorization', token)
             .then(checkOk);
+    });
+
+    it('can sign in a user', () => {
+        return request
+            .post('/api/auth/signin')
+            .send(justin)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
     });
 });
