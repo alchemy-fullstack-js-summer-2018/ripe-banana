@@ -4,8 +4,8 @@ const User = require('../../lib/models/user');
 describe('User model', () => {
     it('Validates good User model', () => {
         const data = {
-            email: 'test@test.com',
-            password: '123456',
+            email: 'me@me.com',
+            password: '123',
             roles: []
         };
 
