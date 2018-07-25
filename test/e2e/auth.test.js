@@ -18,7 +18,7 @@ const badEmail = {
 };
 
 
-describe.only('Auth API', () => {
+describe('Auth API', () => {
     let token;
     beforeEach(() => dropCollection('users'));
 

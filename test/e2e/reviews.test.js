@@ -1,17 +1,19 @@
 const { assert } = require('chai');
 const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
+const { verify } = require('../../lib/util/token-service');
 
 let leoActor;
 let legendaryStudio;
-let justinChang;
 let inceptionFilm;
 let inceptionReview1;
 let inceptionReview2;
+let token;
 
-const justin = {
-    name: 'Justin Chang',
-    company: 'The Hollywood Reporter' 
+let justinChang = {
+    email: 'justinchang@variety.com',
+    password: 'helloWorld',
+    roles: ['admin']
 };
 
 const leo = { 
@@ -47,13 +49,13 @@ const makeSimple = (review, film) => {
     return simple;
 };
 
-describe('Reviews API', () => {
+describe.only('Reviews API', () => {
 
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('users'));
 
     beforeEach(() => {
         return request
@@ -73,10 +75,14 @@ describe('Reviews API', () => {
 
     beforeEach(() => {
         return request
-            .post('/api/reviewers')
-            .send(justin)
+            .post('/api/auth/signup')
+            .send(justinChang)
             .then(checkOk)
-            .then(({ body }) => justinChang = body);
+            .then(({ body }) => {
+                token = body.token;
+                verify(token)
+                    .then(body => justinChang._id = body.id);
+            });
     });
 
     beforeEach(() => {
@@ -99,9 +105,10 @@ describe('Reviews API', () => {
             review: 'It was great',
             film: inceptionFilm._id,
             createdAt: new Date('2009-11-11')
-        })
+        }, token)
             .then(data => inceptionReview1 = data);
     });
+
     beforeEach(() => {
         return save('reviews', {
             rating: 4,
@@ -109,7 +116,7 @@ describe('Reviews API', () => {
             review: 'It was meh',
             film: inceptionFilm._id,
             createdAt: new Date('2016-10-17')
-        })
+        }, token)
             .then(data => inceptionReview2 = data);
     });
 

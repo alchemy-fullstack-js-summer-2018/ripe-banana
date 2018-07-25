@@ -12,9 +12,10 @@ const checkOk = res => {
     return res;
 };
 
-const save = (path, data) => {
+const save = (path, data, token = null) => {
     return request
         .post(`/api/${path}`)
+        .set('Authorization', token)
         .send(data)
         .then(checkOk)
         .then(({ body }) => body);
