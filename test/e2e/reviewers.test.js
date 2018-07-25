@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe.only('Reviewer API', () => {
+describe('Reviewer API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -24,7 +24,7 @@ describe.only('Reviewer API', () => {
     let token; 
     beforeEach(() => {
         return request
-            .post('/api/reviewer/signup')
+            .post('/api/reviewers/signup')
             .send({
                 name: 'Easton',
                 company: 'Life',
@@ -33,18 +33,19 @@ describe.only('Reviewer API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
+                console.log('BODY!!!!', body.token);
                 token = body.token;
             });
     });
 
-    let bobby;
-    beforeEach(() => {
-        return save({
-            name: 'Bobby',
-            company: 'Unemployed'
-        })
-            .then(data => bobby = data);
-    });
+    // let bobby;
+    // beforeEach(() => {
+    //     return save({
+    //         name: 'Bobby',
+    //         company: 'Unemployed'
+    //     })
+    //         .then(data => bobby = data);
+    // });
 
     let studio;
     beforeEach(() => {
@@ -78,18 +79,18 @@ describe.only('Reviewer API', () => {
             .then(({ body }) => film = body);
     });
 
-    let review;
-    beforeEach(() => {
-        return request  
-            .post('/api/reviews')
-            .send({ 
-                rating: 5,
-                reviewer: bobby._id,
-                review: 'Another great Injoong Flick!',
-                film: film._id 
-            })
-            .then(({ body }) => review = body);
-    });
+    // let review;
+    // beforeEach(() => {
+    //     return request  
+    //         .post('/api/reviews')
+    //         .send({ 
+    //             rating: 5,
+    //             reviewer: bobby._id,
+    //             review: 'Another great Injoong Flick!',
+    //             film: film._id 
+    //         })
+    //         .then(({ body }) => review = body);
+    // });
 
     const makeSimple = (reviewer, review, film) => {
         const simple = {
@@ -116,7 +117,24 @@ describe.only('Reviewer API', () => {
 
     it('signs up a user', () => {
         assert.isDefined(token);
-    }); 
+    });
+
+    // it('verifies a token', () => {
+    //     assert.isDefined(token);
+    // });
+
+    it.only('can sign in a user', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'easton@portland.com',
+                password: 'adamngoodone'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
+    });
 
     it('saves a reviewer', () => {
         assert.isOk(bobby._id);

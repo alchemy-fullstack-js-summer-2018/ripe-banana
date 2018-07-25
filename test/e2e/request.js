@@ -13,10 +13,12 @@ request.checkOk = res => {
 };
 
 // request.getToken = () => request
-//     .post('/api/auth/singup')
+//     .post('/api/reviewers/singup')
 //     .send({
+//         name: 'Easton',
+//         company: 'ACL',
 //         email: 'easton@portland.com',
-//         password: 'adamngoodone'
+//         password: 'adamngoodone',
 //     })
 //     .then(({ body }) => body.token);
 

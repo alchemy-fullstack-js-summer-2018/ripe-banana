@@ -2,8 +2,9 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
+const { Types } = require('mongoose');
 
-describe('Review API', () => {
+describe.only('Review API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -12,15 +13,21 @@ describe('Review API', () => {
         dropCollection('studios');
     });
 
-    let reviewer;
+    //let reviewer;
+    let token;
     beforeEach(() => {
         return request
-            .post('/api/reviewers')
+            .post('/api/reviewers/signup')
             .send({ 
                 name: 'Kevin',
-                company: 'Kevin at the Movies, LLC'
+                company: 'Kevin at the Movies, LLC',
+                email: 'kevin@portland.com',
+                password: 'kevin'
             })
-            .then(({ body }) => reviewer = body);
+            .then(({ body }) => {
+                console.log('********', body);
+                token = body.token;
+            });
     });
 
     let studio;
@@ -49,12 +56,14 @@ describe('Review API', () => {
     beforeEach(() => {
         return request
             .post('/api/reviews')
+            .set('Authorization', token)
             .send({
                 rating: 4,
-                reviewer: reviewer._id,
+                reviewer: Types.ObjectId(),
                 review: 'Kevin says this is the 2nd best Injoong movie out there.',
                 film: film._id,
             })
+            .then(checkOk)
             .then(({ body }) => {
                 review = body;
             }); 
@@ -76,7 +85,7 @@ describe('Review API', () => {
         return simple;
     };
 
-    it('saves a review', () => {
+    it.only('saves a review', () => {
         assert.isOk(review._id);
     });
 
