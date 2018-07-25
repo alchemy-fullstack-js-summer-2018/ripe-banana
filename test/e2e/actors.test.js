@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe('Actor API', () => {
+describe.only('Actor API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
@@ -13,16 +13,30 @@ describe('Actor API', () => {
         dropCollection('studios');
     });
 
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/reviewers/signup')
+            .send({ 
+                name: 'Easton',
+                company: 'ACL',
+                email: 'easton@portland.com',
+                password: 'adamngoodone',
+                roles: ['admin']
+            })
+            .then(({ body }) => token = body.token);
+    });
+
     function save(actor) {
         return request
             .post('/api/actors')
+            .set('Authorization', token)
             .send(actor)
             .then(checkOk)
             .then(({ body }) => body);
     }
 
     let actor;
-
     beforeEach(() => {
         return save({
             name: 'Easton',
@@ -38,6 +52,7 @@ describe('Actor API', () => {
         return request  
             .post('/api/studios')
             .send({ name: 'SortaGood Pictures' })
+            .set('Authorization', token)
             .then(({ body }) => studio = body);
     });
 
@@ -56,6 +71,23 @@ describe('Actor API', () => {
             })
             .then(({ body }) => film = body);
     });
+
+    const makeSimple = (actor, film) => {
+        const simple = {
+            _id: actor._id,
+            name: actor.name,
+            dob: actor.dob,
+            pob: actor.pob
+        };
+        if(film){
+            simple.films = [{
+                _id: film._id,
+                title: film.title,
+                released: film.released
+            }];
+        }
+        return simple;
+    };
 
     it('saves an actor', () => {
         assert.isOk(actor._id);
@@ -76,23 +108,6 @@ describe('Actor API', () => {
             });
     });
 
-    const makeSimple = (actor, film) => {
-        const simple = {
-            _id: actor._id,
-            name: actor.name,
-            dob: actor.dob,
-            pob: actor.pob
-        };
-        if(film){
-            simple.films = [{
-                _id: film._id,
-                title: film.title,
-                released: film.released
-            }];
-        }
-        return simple;
-    };
-
     it('gets an actor by id', () => {
         return request
             .get(`/api/actors/${actor._id}`)
@@ -107,6 +122,7 @@ describe('Actor API', () => {
         actor.name = 'Injoong';
         return request 
             .put(`/api/actors/${actor._id}`)
+            .set('Authorization', token)
             .send(actor)
             .then(checkOk)
             .then(({ body }) => {
@@ -121,6 +137,7 @@ describe('Actor API', () => {
             .then(() => {
                 return request
                     .delete(`/api/actors/${mario._id}`)
+                    .set('Authorization', token)
                     .then(checkOk)
                     .then(res => {
                         assert.deepEqual(res.body, { removed: true });

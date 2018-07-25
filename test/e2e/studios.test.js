@@ -3,9 +3,10 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
 
-describe.only('Studio API', () => {
+describe('Studio API', () => {
 
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('reviewers'));
 
     let token;
@@ -25,6 +26,7 @@ describe.only('Studio API', () => {
     function save(studio) {
         return request
             .post('/api/studios')
+            .set('Authorization', token)
             .send(studio)
             .then(checkOk)
             .then(({ body }) => body);
