@@ -57,7 +57,7 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.only('verifies a token', () => {
+    it('verifies a token', () => {
         return request
             .get('/api/reviewers/verify')
             .set('Authorization', token)

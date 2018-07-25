@@ -9,7 +9,10 @@ const request = chai.request(server).keepOpen();
 const data = require('./data');
 
 request.checkOk = res => {
-    if(res.status !== 200) throw new Error('expected 200 http status code');
+    if(res.status !== 200) {
+        console.log(res.status);
+        throw new Error('expected 200 http status code');
+    }
     return res;
 };
 
