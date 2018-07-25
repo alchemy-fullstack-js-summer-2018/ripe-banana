@@ -36,10 +36,33 @@ describe('Reviewers API', () => {
             });
     });
 
-    it.only('signs up a user', () => {
+    it('signs up a user', () => {
         assert.isDefined(token);
     });
 
+    // it.only('verifies a token', () => {
+    //     return request
+    //         .get('/api/reviewers/verify')
+    //         // .set('Authorization', token)
+    //         .then(checkOk);
+    // });
+
+    it.only('signs in a user', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                name: 'Mariah',
+                email: 'test@test.com',
+                company: 'Alchemy Movie Lab',
+                password: 'abc123'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
+    });
+
+    /* old tests */
     it.skip('saves a reviewer', () => {
         assert.isOk(arthur._id);
         assert.isOk(mariah._id);
