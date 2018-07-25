@@ -4,7 +4,7 @@ const { dropCollection  } = require('./db');
 
 const { checkOk } = request;
 
-describe('Studios API', () => {
+describe.skip('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
 

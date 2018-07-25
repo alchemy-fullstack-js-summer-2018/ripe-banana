@@ -2,7 +2,7 @@ const { assert } = require('chai');
 const { getErrors } = require('./helpers');
 const Reviewer = require('../../lib/models/reviewer');
 
-describe.only('Reviewer model', () => {
+describe('Reviewer model', () => {
 
     it('validates good model', () => {
         const data = {

@@ -23,6 +23,15 @@ request.simplify = data => {
     return simple;
 };
 
+// request.getToken = () => request
+//     .post('/api/auth/signup')
+//     .send({
+//         email: 'chip@fermentedbanana.com',
+//         password: 'pw123'
+//     })
+//     .then(({ body }) => body.token);
+
+
 after(done => server.close(done));
 
 module.exports = request;
