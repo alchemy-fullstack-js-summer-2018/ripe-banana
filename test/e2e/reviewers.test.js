@@ -47,7 +47,7 @@ describe('Reviewers API', () => {
     //         .then(checkOk);
     // });
 
-    it.only('signs in a user', () => {
+    it('signs in a user', () => {
         return request
             .post('/api/reviewers/signin')
             .send({
