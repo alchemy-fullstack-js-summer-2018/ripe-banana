@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, save, saveWithAuth, makeSimple } = request;
 
-describe('Studios API', () => {
+describe.only('Studios API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -49,7 +49,7 @@ describe('Studios API', () => {
             .then(body => banks = body);
     });
 
-    it.only('saves a studio', () => {
+    it('saves a studio', () => {
         assert.isOk(disney._id);
     });
 
@@ -72,16 +72,16 @@ describe('Studios API', () => {
             .get('/api/studios')
             .then(checkOk)
             .then(({ body }) => {
-                delete warner.address;
                 delete disney.address;
                 delete disney.films;
-                assert.deepEqual(body, [warner, disney]);
+                assert.deepEqual(body, [disney]);
             });
     });
 
     it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
-            .delete(`/api/studios/${warner._id}`)
+            .delete(`/api/studios/${disney._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isFalse(body.removed);
@@ -90,12 +90,14 @@ describe('Studios API', () => {
 
     it('Removes a studio on DELETE', () => {
         return request
-            .delete(`/api/films/${gameNight._id}`)
+            .delete(`/api/films/${banks._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
                 return request
-                    .delete(`/api/studios/${warner._id}`);
+                    .delete(`/api/studios/${disney._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
