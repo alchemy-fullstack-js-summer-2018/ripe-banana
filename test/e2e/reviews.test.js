@@ -11,10 +11,27 @@ describe('Reviews API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('users'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'me@me.com',
+                password: '123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     function saveReviewer(reviewer) {
         return request
             .post('/api/reviewers')
+            .set('Authorization', token)
             .send(reviewer)
             .then(checkOk)
             .then(({ body }) => {
@@ -102,7 +119,9 @@ describe('Reviews API', () => {
         })
             .then(data => {
                 review2 = data;
-                return request.get('/api/reviews');
+                return request
+                    .get('/api/reviews')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -115,6 +134,7 @@ describe('Reviews API', () => {
         review1.review = 'BEST MOVIE EVER...NOT';
         return request
             .put(`/api/reviews/${review1._id}`)
+            .set('Authorization', token)
             .send(review1)
             .then(checkOk)
             .then(({ body }) => {

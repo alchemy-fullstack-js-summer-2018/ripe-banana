@@ -11,6 +11,7 @@ describe('Reviewers API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('users'));
 
     let token;
     beforeEach(() => {
@@ -18,7 +19,8 @@ describe('Reviewers API', () => {
             .post('/api/auth/signup')
             .send({
                 email: 'me@me.com',
-                password: '123'
+                password: '123',
+                roles: ['admin']
             })
             .then(checkOk)
             .then(({ body }) => {

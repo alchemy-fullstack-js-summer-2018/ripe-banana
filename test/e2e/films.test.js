@@ -9,10 +9,28 @@ describe('Films API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('users'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'me@me.com',
+                password: '123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     function saveReviewer(reviewer) {
         return request
             .post('/api/reviewers')
+            .set('Authorization', token)
             .send(reviewer)
             .then(checkOk)
             .then(({ body }) => {
@@ -94,7 +112,9 @@ describe('Films API', () => {
         })
             .then(data => {
                 topGun = data;
-                return request.get('/api/films');
+                return request
+                    .get('/api/films')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -108,6 +128,7 @@ describe('Films API', () => {
     it('Gets a film by id', () => {
         return request
             .get(`/api/films/${scarface._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, 
                     makeFilm2(scarface, fox, rock, review1, ebert)
@@ -118,6 +139,7 @@ describe('Films API', () => {
     it('Deletes a film by id', () => {
         return request
             .delete(`/api/films/${scarface._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(res => {
                 assert.deepEqual(res.body, { removed: true });
