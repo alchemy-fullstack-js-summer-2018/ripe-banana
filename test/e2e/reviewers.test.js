@@ -40,12 +40,12 @@ describe('Reviewers API', () => {
         assert.isDefined(token);
     });
 
-    // it.only('verifies a token', () => {
-    //     return request
-    //         .get('/api/reviewers/verify')
-    //         // .set('Authorization', token)
-    //         .then(checkOk);
-    // });
+    it.only('verifies a token', () => {
+        return request
+            .get('/api/reviewers/verify')
+            .set('Authorization', token)
+            .then(checkOk);
+    });
 
     it('signs in a user', () => {
         return request
