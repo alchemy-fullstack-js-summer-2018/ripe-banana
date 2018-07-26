@@ -77,6 +77,7 @@ describe.only('Films API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('users'));
     
     beforeEach(() => {
@@ -154,19 +155,19 @@ describe.only('Films API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                console.log('***CONSOLE LOG***', body);
                 assert.deepEqual(body, [
                     makeSimple(inceptionFilm, legendaryStudio),
                     makeSimple(dunkirkFilm, legendaryStudio)
                 ]);
             });
     });
-
+        
     it('gets a single film by ID', () => {
         return request
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
             .then(({ body }) => {
+                console.log('***CONSOLE LOG***', body);
                 assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
             });
     });
