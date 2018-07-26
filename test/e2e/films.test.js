@@ -1,5 +1,6 @@
 const { assert } = require('chai');
-const { request, save, checkOk } = require('./request');
+const { save, checkOk } = require('./request');
+const request = require('./request');
 const { dropCollection } = require('./db');
 
 const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null) => {
@@ -64,18 +65,34 @@ const leo = {
     pob: 'Beaverton, OR'
 };
 
-const justin = {
-    name: 'Justin Chang',
-    company: 'The Hollywood Reporter'
-};
 
-describe('Films API', () => {
+describe.only('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => dropCollection('reviewers'));
     
+    let token;
+    let justin;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                name: 'Justin Chang',
+                company: 'The Hollywood Reporter',
+                email: 'justin@email.com',
+                password: 'pwd123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+                justin = body.reviewer;
+            });
+    });
+
     beforeEach(() => {
         return request
             .post('/api/studios')
@@ -92,13 +109,7 @@ describe('Films API', () => {
             .then(({ body }) => leoActor = body);
     });
 
-    beforeEach(() => {
-        return request
-            .post('/api/reviewers')
-            .send(justin)
-            .then(checkOk)
-            .then(({ body }) => justinChang = body);
-    });
+    
 
     beforeEach(() => {
         return save('films', {
@@ -116,7 +127,7 @@ describe('Films API', () => {
     beforeEach(() => {
         return save('reviews', {
             rating: 5,
-            reviewer: justinChang._id,
+            reviewer: justin._id,
             review: '...a loop within the movie\'s plot that binds space and time into...',
             film: inceptionFilm._id,
             createdAt: new Date(),
@@ -154,7 +165,7 @@ describe('Films API', () => {
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
+                assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justin));
             });
     });
 

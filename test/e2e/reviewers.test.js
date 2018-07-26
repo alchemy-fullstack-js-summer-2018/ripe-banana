@@ -171,6 +171,16 @@ describe('Reviewers API', () => {
     //         });
     // });
 
+    it('gets a list of reviewers', () => {
+        return request
+            .get('/api/reviewers')
+            .set('Authorization', token)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [justinChang]);
+            });
+    });
+
     it('updates a reviewer', () => {
         justinChang.name = 'Robert Thompson';
         return request
