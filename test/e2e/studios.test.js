@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { checkOk, save, makeSimple } = request;
 
 describe('Studios API', () => {
 
@@ -33,7 +33,7 @@ describe('Studios API', () => {
                 country: 'USA'
             } 
         };
-        return saveWithAuth(data, 'studios', token)
+        return save(data, 'studios', token)
             .then(body => disney = body);
     });
 
@@ -45,7 +45,7 @@ describe('Studios API', () => {
             released: 2013,
             cast: []
         };
-        return saveWithAuth(data, 'films', token)
+        return save(data, 'films', token)
             .then(body => banks = body);
     });
 

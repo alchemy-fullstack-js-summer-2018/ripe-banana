@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { checkOk, save, makeSimple } = request;
 const { Types } = require('mongoose');
 
 describe('Reviewers API', () => {
@@ -34,7 +34,7 @@ describe('Reviewers API', () => {
             released: 2013,
             cast: []
         };
-        return saveWithAuth(data, 'films', token)
+        return save(data, 'films', token)
             .then(body => banks = body);
     });
 
@@ -45,7 +45,7 @@ describe('Reviewers API', () => {
             review: 'Tom Hanks is the best!',
             film: banks._id
         };
-        return saveWithAuth(data, 'reviews', token)
+        return save(data, 'reviews', token)
             .then(body => review = body);
     });
     

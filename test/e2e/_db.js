@@ -12,5 +12,11 @@ module.exports = {
             .catch(err => {
                 throw err;
             });
+    },
+    dropCollection(name) {
+        return mongoose.connection.dropCollection(name)
+            .catch(err => {
+                if(err.codeName !== 'NamespaceNotFound') throw err;
+            });
     }
 };

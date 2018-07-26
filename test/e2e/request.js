@@ -10,24 +10,13 @@ const request = chai.request(server).keepOpen();
 
 request.checkOk = res => {
     if(res.status !== 200) {
-        console.log(res.status);
+        console.log('STATUS:', res.status);
         throw new Error('expected 200 http status code');
     }
     return res;
 };
 
-request.save = function(data, resource) {
-    return request
-        .post(`/api/${resource}`)
-        .send(data)
-        .then(this.checkOk)
-        .then(({ body }) => {
-            delete body.__v;
-            return body;
-        });
-};
-
-request.saveWithAuth = function(data, resource, token) {
+request.save = function(data, resource, token = '') {
     return request
         .post(`/api/${resource}`)
         .set('Authorization', token)

@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { checkOk, save, makeSimple } = request;
 const { Types } = require('mongoose');
 
 describe('Actors API', () => {
@@ -28,7 +28,7 @@ describe('Actors API', () => {
             dob: new Date(1956, 6, 9),
             pob: 'Concord, CA'
         };
-        return saveWithAuth(data, 'actors', token)
+        return save(data, 'actors', token)
             .then(body => tom = body);
     });
 
@@ -39,7 +39,7 @@ describe('Actors API', () => {
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
         };
-        return saveWithAuth(data, 'actors', token)
+        return save(data, 'actors', token)
             .then(body => emma = body);
     });
 
@@ -60,7 +60,7 @@ describe('Actors API', () => {
                 }
             ]
         };
-        return saveWithAuth(data, 'films', token)
+        return save(data, 'films', token)
             .then(body => banks = body);
     });
 

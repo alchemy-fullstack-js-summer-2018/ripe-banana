@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save, saveWithAuth, makeSimple } = request;
+const { checkOk, save, makeSimple } = request;
 
 describe('Films API', () => {
 
@@ -33,7 +33,7 @@ describe('Films API', () => {
             dob: new Date(1956, 6, 9),
             pob: 'Concord, CA'
         };
-        return saveWithAuth(data, 'actors', token)
+        return save(data, 'actors', token)
             .then(body => tom = body);
     });
 
@@ -44,7 +44,7 @@ describe('Films API', () => {
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
         };
-        return saveWithAuth(data, 'actors', token)
+        return save(data, 'actors', token)
             .then(body => emma = body);
     });
 
@@ -58,7 +58,7 @@ describe('Films API', () => {
                 country: 'USA'
             } 
         };
-        return saveWithAuth(data, 'studios', token)
+        return save(data, 'studios', token)
             .then(body => disney = body);
     });
 
@@ -79,7 +79,7 @@ describe('Films API', () => {
                 }
             ]
         };
-        return saveWithAuth(data, 'films', token)
+        return save(data, 'films', token)
             .then(body => banks = body);
     });
 
@@ -90,7 +90,7 @@ describe('Films API', () => {
             review: 'Tom Hanks is the best!',
             film: banks._id
         };
-        return saveWithAuth(data, 'reviews', token)
+        return save(data, 'reviews', token)
             .then(body => review = body);
     });
 
