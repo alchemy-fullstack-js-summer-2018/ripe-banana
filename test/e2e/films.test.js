@@ -7,12 +7,6 @@ describe('Films API', () => {
 
     beforeEach(() => dropDatabase());
 
-    // let tom, emma;
-    // let banks, gameNight;
-    // let warner, disney;
-    // let mariah, arthur;
-    // let reviewMariah, reviewArthur;
-
     let arthur;
     let token;
     beforeEach(() => {

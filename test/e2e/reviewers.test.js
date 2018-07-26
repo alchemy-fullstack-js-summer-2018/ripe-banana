@@ -129,11 +129,11 @@ describe('Reviewers API', () => {
         arthur.company = 'Netflix';
         return request
             .put(`/api/reviewers/${arthur._id}`)
+            .set('Authorization', token)
             .send(arthur)
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
-                delete arthur.reviews;
                 assert.deepEqual(body, arthur);
             });
     });
