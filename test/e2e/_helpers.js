@@ -12,10 +12,10 @@ function saveReview(review) {
         });
 }
 
-function saveFilm(film) {
+function saveReviewer(reviewer) {
     return request
-        .post('/api/films')
-        .send(film)
+        .post('/api/reviewers')
+        .send(reviewer)
         .then(checkOk)
         .then(({ body }) => {
             delete body.__v;
@@ -27,6 +27,17 @@ function saveStudio(studio) {
     return request
         .post('/api/studios')
         .send(studio)
+        .then(checkOk)
+        .then(({ body }) => {
+            delete body.__v;
+            return body;
+        });
+}
+
+function saveFilm(film) {
+    return request
+        .post('/api/films')
+        .send(film)
         .then(checkOk)
         .then(({ body }) => {
             delete body.__v;
@@ -136,8 +147,10 @@ const makeReview = (review, film) => {
 };
 
 module.exports = {
-    saveActor,
+   
     saveFilm,
+    saveReviewer,
+    saveActor,
     saveReview,
     saveStudio,
     makeFilm,

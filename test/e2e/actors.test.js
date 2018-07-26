@@ -2,15 +2,30 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveStudio } = require('./_helpers');
+const {  saveFilm, saveStudio } = require('./_helpers');
 
-describe('Actors API', () => {
+describe.only('Actors API', () => {
 
-    beforeEach(() => dropCollection('reviewers'));
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('users'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'me@me.com',
+                password: '123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     let depp;
     beforeEach(() => {
@@ -23,6 +38,18 @@ describe('Actors API', () => {
                 depp = data;
             });          
     });
+
+    function saveActor(actor) {
+        return request
+            .post('/api/actors')
+            .set('Authorization', token)
+            .send(actor)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
+    }
 
     let univision;
     beforeEach(() => {
@@ -67,7 +94,9 @@ describe('Actors API', () => {
         })
             .then(data => {
                 diesel = data;
-                return request.get('/api/actors');
+                return request
+                    .get('/api/actors')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -94,6 +123,7 @@ describe('Actors API', () => {
     it('Gets an actor by id', () => {
         return request
             .get(`/api/actors/${depp._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, makeActor(depp, dogDay));
             });
@@ -104,6 +134,7 @@ describe('Actors API', () => {
         depp.dob = '1990';
         return request
             .put(`/api/actors/${depp._id}`)
+            .set('Authorization', token)
             .send(depp)
             .then(checkOk)
             .then(({ body }) => {
@@ -114,6 +145,7 @@ describe('Actors API', () => {
     it('Does not delete actor who are in films', () => {
         return request
             .delete(`/api/actors/${depp._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: false });
@@ -123,10 +155,13 @@ describe('Actors API', () => {
     it('Deletes an actor by id', () => {
         return request
             .delete(`/api/films/${dogDay._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: true });
-                return request.delete(`/api/actors/${depp._id}`);
+                return request
+                    .delete(`/api/actors/${depp._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {

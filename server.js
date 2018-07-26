@@ -9,5 +9,5 @@ const port = process.env.port || 3000;
 
 server.listen(port, () => {
     // eslint-disable-next-line
-    console.log('Server jammin\' on', server.address().port);
+    console.log('Server on', server.address().port);
 });

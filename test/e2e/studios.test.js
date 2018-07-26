@@ -2,13 +2,31 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveStudio, makeStudio } = require('./_helpers');
+const { saveActor, saveFilm, saveStudio,  makeStudio } = require('./_helpers');
 
 describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => dropCollection('users'));
+
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'me@me.com',
+                password: '123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
  
     let univision;
     beforeEach(() => {
@@ -50,8 +68,6 @@ describe('Studios API', () => {
             });
     });
 
-
-
     it('Saves a studio', () => {
         assert.isOk(univision._id);
     });
@@ -64,7 +80,9 @@ describe('Studios API', () => {
         })
             .then(_fox => {
                 fox = _fox;
-                return request.get('/api/studios');
+                return request
+                    .get('/api/studios')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -76,6 +94,7 @@ describe('Studios API', () => {
     it('Gets a studio by id', () => {
         return request
             .get(`/api/studios/${univision._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, makeStudio(univision, dogDay));
             });
@@ -84,6 +103,7 @@ describe('Studios API', () => {
     it('Does not delete a studio when films exist', () => {
         return request
             .delete(`/api/studios/${univision._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: false });
@@ -93,10 +113,13 @@ describe('Studios API', () => {
     it('Deletes a studio by id', () => {
         return request
             .delete(`/api/films/${dogDay._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: true });
-                return request.delete(`/api/studios/${univision._id}`);
+                return request
+                    .delete(`/api/studios/${univision._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
