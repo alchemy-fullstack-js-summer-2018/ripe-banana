@@ -15,6 +15,7 @@ describe('Reviewer model', () => {
             name: 'Betty Crocker',
             email: 'crock@email.com',
             company: 'Pancake Hut',
+            password: 'abc12345',
             roles: ['admin']    
         };
         
