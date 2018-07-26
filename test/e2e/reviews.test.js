@@ -58,22 +58,7 @@ describe('Reviews API', () => {
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('users'));
 
-    beforeEach(() => {
-        return request
-            .post('/api/actors')
-            .send(leo)
-            .then(checkOk)
-            .then(({ body }) => leoActor = body);
-    });
-
-    beforeEach(() => {
-        return request
-            .post('/api/studios')
-            .send(legendary)
-            .then(checkOk)
-            .then(({ body }) => legendaryStudio = body);
-    });
-
+    
     beforeEach(() => {
         return request
             .post('/api/auth/signup')
@@ -89,6 +74,24 @@ describe('Reviews API', () => {
     });
 
     beforeEach(() => {
+        return request
+            .post('/api/actors')
+            .send(leo)
+            .set('Authorization', token)
+            .then(checkOk)
+            .then(({ body }) => leoActor = body);
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/studios')
+            .send(legendary)
+            .set('Authorization', token)
+            .then(checkOk)
+            .then(({ body }) => legendaryStudio = body);
+    });
+
+    beforeEach(() => {
         return save('films', {
             title: 'Inception',
             studio: legendaryStudio._id,
@@ -97,7 +100,7 @@ describe('Reviews API', () => {
                 role: 'Cobb',
                 actor: leoActor._id
             }]
-        })
+        }, token)
             .then(data => inceptionFilm = data);
     });
     

@@ -72,7 +72,7 @@ let justinChang = {
     roles: ['admin']
 };
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
@@ -162,14 +162,13 @@ describe.only('Films API', () => {
             });
     });
         
-    it('gets a single film by ID', (done) => {
+    it('gets a single film by ID', () => {
         return request
             .get(`/api/films/${inceptionFilm._id}`)
             .then(checkOk)
             .then(({ body }) => {
                 console.log('***CONSOLE LOG***', body);
                 assert.deepEqual(body, makeSimple(inceptionFilm, legendaryStudio, leoActor, inceptionReview, justinChang));
-                done();
             });
     });
 

@@ -98,6 +98,7 @@ describe('Studios API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'The Lion King',
                 studio: warnerStudios._id,
