@@ -4,7 +4,7 @@ const { dropCollection } = require('./db');
 
 const { checkOk } = request;
 
-describe.skip('Reviewer API', () => {
+describe.only('Reviewer API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
 
@@ -19,13 +19,13 @@ describe.skip('Reviewer API', () => {
         };
 
         return request
-            .post('/api/reviewers/signup')
+            .post('/api/auth/signup')
             .send(data)
             .then(checkOk)
             .then(({ body }) => {
                 token = body.token;
                 chip = body.reviewer;
-                console.log('chip', chip);
+                // console.log('token', token);
             }); 
     });
 
@@ -34,10 +34,14 @@ describe.skip('Reviewer API', () => {
     });
 
     it('signs in a user', () => {
-        delete chip._id;
         return request 
-            .post('/api/reviewers/signin')
-            .send(chip)
+            .post('/api/auth/signin')
+            .send({
+                name: 'Chip Ellsworth III',
+                company: 'Fermented Banana',
+                email: 'chip@fermentedbanana.com',
+                password: 'pw123'
+            })
             .then(checkOk)
             .then(({ body }) => {
                 // console.log('body***', body);
@@ -51,20 +55,6 @@ describe.skip('Reviewer API', () => {
             .set('Authorization', token)
             .then(checkOk);
     });
-
-    // it('fails on wrong password', () => {
-    //     return request 
-    //         .post('/api/reviewers/signin')
-    //         .send({
-    //             email: 'chip@fermentedbanana.com',
-    //             password: 'bad'
-    //         })
-    //         .then(res => {
-    //             console.log('***res***', res.body);
-    //             assert.equal(res.status, 401);
-    //             assert.equal(res.body.error, 'Invalid email and/or password');
-    //         });
-    // });
 
     //     function save(reviewer) {
     //         return request
@@ -93,9 +83,9 @@ describe.skip('Reviewer API', () => {
     //             .then(data => chip = data);
     //     });
 
-    it('saves a reviewer', () => {
-        assert.isOk(chip._id);
-    });
+    // it('saves a reviewer', () => {
+    //     assert.isOk(chip._id);
+    // });
 
 //     it('gets a reviewer by id', () => {
 //         return request

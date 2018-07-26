@@ -5,7 +5,9 @@ const { checkOk, simplify } = request;
 
 describe('Reviews API', () => {
     
-    beforeEach(() => dropCollection('reviews'));
+    beforeEach(() => {
+        dropCollection('reviews');
+    });
 
     let amazing, horrible;
     let winonaRyder, donJohnson;
