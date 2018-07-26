@@ -16,7 +16,7 @@ describe('Reviews API', () => {
             company: 'Alchemy Movie Lab',
             password: 'abc123',
             roles: ['admin']
-        }
+        };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;
@@ -43,7 +43,7 @@ describe('Reviews API', () => {
             rating: 5,
             review: 'Tom Hanks is the best!',
             film: banks._id
-        }
+        };
         return saveWithAuth(data, 'reviews', token)
             .then(body => review = body);
     });
@@ -56,11 +56,11 @@ describe('Reviews API', () => {
             .then(res => {
                 assert.equal(res.status, 401);
                 assert.equal(res.body.error, 'Invalid or missing token');
-            })
+            });
     });
 
     it('saves a review', () => {
-        assert.isOk(mariahReview._id);
+        assert.isOk(review._id);
     });
 
     it('returns all reviews on GET', () => {

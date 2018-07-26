@@ -16,7 +16,7 @@ describe('Actors API', () => {
             company: 'Alchemy Movie Lab',
             password: 'abc123',
             roles: ['admin']
-        }
+        };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;
@@ -30,7 +30,7 @@ describe('Actors API', () => {
             name: 'Tom Hanks',
             dob: new Date(1956, 6, 9),
             pob: 'Concord, CA'
-        }
+        };
         return saveWithAuth(data, 'actors', token)
             .then(body => tom = body);
     });
@@ -40,7 +40,7 @@ describe('Actors API', () => {
             name: 'Emma Thompson',
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
-        }
+        };
         return saveWithAuth(data, 'actors', token)
             .then(body => emma = body);
     });

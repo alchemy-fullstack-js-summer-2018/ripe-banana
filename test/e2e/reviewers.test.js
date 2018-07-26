@@ -17,7 +17,7 @@ describe('Reviewers API', () => {
             company: 'Alchemy Movie Lab',
             password: 'abc123',
             roles: ['admin']
-        }
+        };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;
@@ -46,7 +46,7 @@ describe('Reviewers API', () => {
             rating: 5,
             review: 'Tom Hanks is the best!',
             film: banks._id
-        }
+        };
         return saveWithAuth(data, 'reviews', token)
             .then(body => review = body);
     });
@@ -106,6 +106,7 @@ describe('Reviewers API', () => {
         mariah.company = 'Netflix';
         return request
             .put(`/api/reviewers/${mariah._id}`)
+            .set('Authorization', token)
             .send(mariah)
             .then(checkOk)
             .then(({ body }) => {

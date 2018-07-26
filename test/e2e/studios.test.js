@@ -15,7 +15,7 @@ describe('Studios API', () => {
             company: 'Alchemy Movie Lab',
             password: 'abc123',
             roles: ['admin']
-        }
+        };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;

@@ -16,7 +16,7 @@ describe('Films API', () => {
             company: 'Alchemy Movie Lab',
             password: 'abc123',
             roles: ['admin']
-        }
+        };
         return save(data, 'reviewers/signup')
             .then(body => {
                 token = body.token;
@@ -32,7 +32,7 @@ describe('Films API', () => {
             name: 'Tom Hanks',
             dob: new Date(1956, 6, 9),
             pob: 'Concord, CA'
-        }
+        };
         return saveWithAuth(data, 'actors', token)
             .then(body => tom = body);
     });
@@ -42,7 +42,7 @@ describe('Films API', () => {
             name: 'Emma Thompson',
             dob: new Date(1959, 3, 15),
             pob: 'London, England'
-        }
+        };
         return saveWithAuth(data, 'actors', token)
             .then(body => emma = body);
     });
@@ -88,7 +88,7 @@ describe('Films API', () => {
             rating: 5,
             review: 'Tom Hanks is the best!',
             film: banks._id
-        }
+        };
         return saveWithAuth(data, 'reviews', token)
             .then(body => review = body);
     });

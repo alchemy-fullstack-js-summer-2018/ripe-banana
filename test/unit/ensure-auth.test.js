@@ -23,7 +23,7 @@ describe('ensure auth middleware', () => {
         const next = () => {
             assert.equal(req.user.id, user._id, 'payload is assigned to req as user');
             done();
-        }
+        };
 
         ensureAuth(req, null, next);
     });
