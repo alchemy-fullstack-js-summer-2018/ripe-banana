@@ -1,5 +1,6 @@
 const { assert } = require('chai');
-const { request, save, checkOk } = require('./request');
+const { save, checkOk } = require('./request');
+const  request = require('./request');
 const { dropCollection } = require('./db');
 
 let leoActor;
@@ -9,13 +10,6 @@ let inceptionFilm;
 let inceptionReview1;
 let inceptionReview2;
 
-const justin = {
-    name: 'Justin Chang',
-    company: 'The Hollywood Reporter',
-    email: 'justin@email.com',
-    password:'pwd123'
-
-};
 
 const leo = { 
     name:'Leonardo DiCaprio',
@@ -74,12 +68,24 @@ describe('Reviews API', () => {
             .then(({ body }) => legendaryStudio = body);
     });
 
+    let token;
+    let justin;
     beforeEach(() => {
         return request
             .post('/api/auth/signup')
-            .send(justin)
+            .send({
+                name: 'Justin Chang',
+                company: 'The Hollywood Reporter',
+                email: 'justin@email.com',
+                password: 'pwd123',
+                roles: ['admin']
+            })
             .then(checkOk)
-            .then(({ body }) => justinChang = body);
+            .then(({ body }) => {
+                token = body.token;
+                justin = body.reviewer;
+
+            });
     });
 
     beforeEach(() => {
@@ -98,7 +104,7 @@ describe('Reviews API', () => {
     beforeEach(() => {
         return save('reviews', {
             rating: 5,
-            reviewer: justinChang._id,
+            reviewer: justin._id,
             review: 'It was great',
             film: inceptionFilm._id,
             createdAt: new Date('2009-11-11')
@@ -108,7 +114,7 @@ describe('Reviews API', () => {
     beforeEach(() => {
         return save('reviews', {
             rating: 4,
-            reviewer: justinChang._id,
+            reviewer: justin._id,
             review: 'It was meh',
             film: inceptionFilm._id,
             createdAt: new Date('2016-10-17')

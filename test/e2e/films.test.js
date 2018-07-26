@@ -65,7 +65,7 @@ const leo = {
 };
 
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
@@ -73,6 +73,7 @@ describe.only('Films API', () => {
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('reviewers'));
     
+    let token;
     let justin;
     beforeEach(() => {
         return request
