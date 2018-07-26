@@ -9,12 +9,17 @@ describe('Reviewers API', () => {
     beforeEach(() => dropCollection('reviewers'));
 
     let token;
+    let crocker;
     beforeEach(() => {
         return request
-            .post('/api/auth/signup')
+            //.post('/api/auth/signup')
+            .post('/api/reviewers/signup')
             .send({
+                name: 'Betty Crocker',
                 email: 'crock@email.com',
-                password: 'abc12345'
+                company: 'Pancake Hut',
+                password: 'abc12345',
+                roles: ['admin']
             })
             .then(checkOk)
             .then(({ body })=> {
@@ -31,7 +36,7 @@ describe('Reviewers API', () => {
             .then(({ body }) => body);
     }
 
-    let crocker;
+    //let crocker;
     beforeEach(() => {
         return save({ 
             name: 'Betty Crocker',

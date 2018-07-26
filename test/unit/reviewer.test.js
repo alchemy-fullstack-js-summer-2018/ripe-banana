@@ -19,12 +19,22 @@ describe('Reviewer model', () => {
         };
         
         const reviewer = new Reviewer(data);
-        const json = reviewer.toJSON();
-        delete json._id;
+        // const json = reviewer.toJSON();
+        // delete json._id;
 
         assert.equal(reviewer.email, data.email);
-        assert.deepEqual(json, data);
-        assert.isUndefined(URLSearchParams.password, 'password should not be set');
+        assert.isUndefined(reviewer.password, 'should not be set up');
+
+        reviewer.generateHash(data.password);
+
+        assert.isDefined(reviewer.hash, 'hash defined');
+        assert.notEqual(reviewer.hash, data.password, 'hash not same as password');
+        assert.isDefined(reviewer.hash, 'hash is defined');
+        assert.notEqual(reviewer.hash, data.password, 'hash does not equal password');
+    
+        //old asserts
+        //assert.deepEqual(json, data);
+        //assert.isUndefined(URLSearchParams.password, 'password should not be set');
         //assert.isUndefined(reviewer.validateSync());
     }); 
 
