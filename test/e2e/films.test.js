@@ -47,7 +47,6 @@ const makeSimple = (film, studio, actor = null, reviews = null, reviewer = null)
 let inceptionFilm;
 let legendaryStudio;
 let leoActor;
-let justinChang;
 let inceptionReview;
 
 const legendary = {
@@ -74,7 +73,6 @@ describe.only('Films API', () => {
     beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('reviewers'));
     
-    let token;
     let justin;
     beforeEach(() => {
         return request
