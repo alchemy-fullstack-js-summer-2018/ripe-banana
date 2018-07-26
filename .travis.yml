@@ -4,5 +4,4 @@ node_js:
 services:
   - mongodb
 env:
-  - MONGODB_URI=mongodb://localhost:27017/banana
-  - APP_SECRET=peaceofmind
+  - MONGODB_URI=mongodb://localhost:27017/banana APP_SECRET=peaceofmind
