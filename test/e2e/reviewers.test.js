@@ -15,24 +15,29 @@ describe('Reviewer API', () => {
 
     function save(reviewer) {
         return request
-            .post('/api/reviewers')
+            .post('/api/reviewers/signup')
             .send(reviewer)
             .then(checkOk)
             .then(({ body }) => body);
     }
 
     let token; 
+    let bobby;
     beforeEach(() => {
         return request
             .post('/api/reviewers/signup')
             .send({
-                name: 'Easton',
-                company: 'Life',
-                email: 'easton@portland.com',
-                password: 'adamngoodone',
+                name: 'Bobby',
+                company: 'Student',
+                email: 'bobby@portland.com',
+                password: '123',
+                roles: ['admin']
             })
             .then(checkOk)
-            .then(({ body }) => token = body.token);
+            .then(({ body }) => {
+                token = body.token;
+                bobby = body.reviewer;
+            });
     });
 
     // let bobby;
@@ -48,6 +53,7 @@ describe('Reviewer API', () => {
     beforeEach(() => {
         return request  
             .post('/api/studios')
+            .set('Authorization', token)
             .send({ name: 'SortaGood Pictures' })
             .then(({ body }) => studio = body);
     });
@@ -56,6 +62,7 @@ describe('Reviewer API', () => {
     beforeEach(() => {
         return request
             .post('/api/actors')
+            .set('Authorization', token)
             .send({ name: 'Arthur' })
             .then(({ body }) => actor = body);
     });
@@ -64,6 +71,7 @@ describe('Reviewer API', () => {
     beforeEach(() => {
         return request  
             .post('/api/films')
+            .set('Authorization', token)
             .send({ 
                 title: 'Injoong Strikes Back',
                 studio: studio._id,
@@ -76,18 +84,19 @@ describe('Reviewer API', () => {
             .then(({ body }) => film = body);
     });
 
-    // let review;
-    // beforeEach(() => {
-    //     return request  
-    //         .post('/api/reviews')
-    //         .send({ 
-    //             rating: 5,
-    //             reviewer: bobby._id,
-    //             review: 'Another great Injoong Flick!',
-    //             film: film._id 
-    //         })
-    //         .then(({ body }) => review = body);
-    // });
+    let review;
+    beforeEach(() => {
+        return request  
+            .post('/api/reviews')
+            .set('Authorization', token)
+            .send({ 
+                rating: 5,
+                reviewer: bobby._id,
+                review: 'Another great Injoong Flick!',
+                film: film._id 
+            })
+            .then(({ body }) => review = body);
+    });
 
     const makeSimple = (reviewer, review, film) => {
         const simple = {
@@ -124,8 +133,8 @@ describe('Reviewer API', () => {
         return request
             .post('/api/reviewers/signin')
             .send({
-                email: 'easton@portland.com',
-                password: 'adamngoodone'
+                email: 'bobby@portland.com',
+                password: '123'
             })
             .then(checkOk)
             .then(({ body }) => {
@@ -141,10 +150,12 @@ describe('Reviewer API', () => {
         let carrie;
         return save({ 
             name: 'carrie',
-            company: 'Student'
+            company: 'Student',
+            email: 'carrie@portland.com',
+            password: 'carrie'
         })
             .then(_carrie => {
-                carrie = _carrie;
+                carrie = _carrie.reviewer;
                 return request.get('/api/reviewers');  
             })
             .then(checkOk)
@@ -166,6 +177,7 @@ describe('Reviewer API', () => {
         bobby.name = 'Robert';
         return request 
             .put(`/api/reviewers/${bobby._id}`)
+            .set('Authorization', token)
             .send(bobby)
             .then(checkOk)
             .then(({ body }) => {

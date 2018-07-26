@@ -21,7 +21,8 @@ describe('Review API', () => {
                 name: 'Kevin',
                 company: 'Kevin at the Movies, LLC',
                 email: 'kevin@portland.com',
-                password: 'kevin'
+                password: 'kevin',
+                roles: ['admin']
             })
             .then(({ body }) => {
                 token = body.token;
@@ -33,6 +34,7 @@ describe('Review API', () => {
     beforeEach(() => {
         return request  
             .post('/api/studios')
+            .set('Authorization', token)
             .send({ name: 'SortaGood Pictures' })
             .then(({ body }) => studio = body);
     });
@@ -41,6 +43,7 @@ describe('Review API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Return of Injoong',
                 studio: studio._id,

@@ -33,7 +33,6 @@ describe('Studio API', () => {
     }
 
     let studio;
-
     beforeEach(() => {
         return save({
             name: 'The Kick Ass Studio',
@@ -50,6 +49,7 @@ describe('Studio API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Return of Injoong',
                 studio: studio._id,

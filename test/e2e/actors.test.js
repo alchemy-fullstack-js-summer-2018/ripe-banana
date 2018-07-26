@@ -60,6 +60,7 @@ describe('Actor API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Return of Injoong',
                 studio: studio._id,
