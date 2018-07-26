@@ -14,15 +14,23 @@ describe.only('Actor API', () => {
         dropCollection('studios');
     });
 
-    let token;
-
-    function save(actor) {
+    let adminCheck;
+    beforeEach(() => {
+        let data = {
+            name: 'Mariah',
+            company: 'ReviewIt, Inc.',
+            email: 'mariah@example.com',
+            password: 'abc123',
+            roles: ['admin']
+        };
         return request
-            .post('/api/actors')
-            .send(actor)
+            .post('/api/auth/signup')
+            .send(data)
             .then(checkOk)
-            .then(({ body }) => body);
-    }
+            .then(({ body }) => {
+                adminCheck = body.adminCheck;
+            });
+    });
 
     let easton;
     beforeEach(() => {
@@ -34,11 +42,13 @@ describe.only('Actor API', () => {
         })
             .then(data => easton = data);
     });
-
+    ///// TEST ////
     it('saves an actor', () => {
         assert.isOk(easton._id);
     });
 
+
+    //// END TEST ///
     let studio;
     beforeEach(() => {
         return request  
@@ -57,14 +67,14 @@ describe.only('Actor API', () => {
                 released: 2017,
                 cast: [{
                     role: '',
-                    actor: actor._id
+                    actor: easton._id
                 }]
             })
             .then(({ body }) => film = body);
     });
 
    
-
+    ///// TEST ////
     it('gets all actors', () => {
         let mark;
         return save({ name: 'Mark' })
@@ -76,16 +86,16 @@ describe.only('Actor API', () => {
             
             .then(({ body }) => {
                 
-                assert.deepEqual(body, [actor, mark]);
+                assert.deepEqual(body, [easton, mark]);
             });
     });
-
-    const makeSimple = (actor, film) => {
+    //// END TEST ///
+    const makeSimple = (easton, film) => {
         const simple = {
-            _id: actor._id,
-            name: actor.name,
-            dob: actor.dob,
-            pob: actor.pob
+            _id: easton._id,
+            name: easton.name,
+            dob: easton.dob,
+            pob: easton.pob
         };
         if(film){
             simple.films = [{
@@ -96,28 +106,29 @@ describe.only('Actor API', () => {
         }
         return simple;
     };
-
+    
+    ///// TEST ////
     it('gets an actor by id', () => {
         return request
-            .get(`/api/actors/${actor._id}`)
+            .get(`/api/actors/${easton._id}`)
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
-                assert.deepEqual(body, makeSimple(actor, film));
+                assert.deepEqual(body, makeSimple(easton, film));
             });
     });
-
+    ///// TEST ////
     it('updates an actor', () => {
-        actor.name = 'Injoong';
+        easton.name = 'Injoong';
         return request 
-            .put(`/api/actors/${actor._id}`)
-            .send(actor)
+            .put(`/api/actors/${easton._id}`)
+            .send(easton)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, actor);
+                assert.deepEqual(body, easton);
             });
     });
-
+    ///// TEST ////
     it('removes an actor', () => {
         let mario;
         return save({ name: 'Mario' })
@@ -132,7 +143,7 @@ describe.only('Actor API', () => {
                     })
                     .then(checkOk)
                     .then(({ body }) => {
-                        assert.deepEqual(body, [actor]);
+                        assert.deepEqual(body, [easton]);
                     });
 
             });
