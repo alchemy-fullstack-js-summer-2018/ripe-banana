@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "npm run test:run",
-    "test:run": "mocha --recursive --timeout 15000",
+    "test:run": "mocha --recursive",
     "test:unit": "npm run test:run -- ./test/unit",
     "test:e2e": "npm run test:run -- ./test/e2e",
     "test:watch": "nodemon --exec 'npm run -s test:run'",
