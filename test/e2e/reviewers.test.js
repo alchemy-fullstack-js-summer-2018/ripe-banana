@@ -8,9 +8,24 @@ describe('Reviewers API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
 
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                email: 'crock@email.com',
+                password: 'abc12345'
+            })
+            .then(checkOk)
+            .then(({ body })=> {
+                token = body.token;
+            });
+        
+    });
     function save(reviewer) {
         return request
             .post('/api/reviewers')
+            .set('Authorization', token)
             .send(reviewer)
             .then(checkOk)
             .then(({ body }) => body);
@@ -19,8 +34,10 @@ describe('Reviewers API', () => {
     let crocker;
     beforeEach(() => {
         return save({ 
-            name: 'Betty Crocker', 
-            company: 'Pancake Hut'
+            name: 'Betty Crocker',
+            email: 'crock@email.com',
+            company: 'Pancake Hut',
+            roles: ['admin']
         })
             .then(data => {
                 crocker = data;
@@ -34,6 +51,7 @@ describe('Reviewers API', () => {
     it('gets a reviewer by id', () => {
         return request
             .get(`/api/reviewers/${crocker._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, crocker);
             });
@@ -43,11 +61,15 @@ describe('Reviewers API', () => {
         let evans;
         return save({ 
             name: 'Pat Evans',
-            company: 'Horse Farm' 
+            email: 'evans@email.com',
+            company: 'Pancake Hut',
+            roles: ['admin']
         })
             .then(_evans => {
                 evans = _evans;
-                return request.get('/api/reviewers');
+                return request
+                    .get('/api/reviewers')
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {

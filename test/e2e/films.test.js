@@ -34,8 +34,10 @@ describe('Films API', () => {
 
     beforeEach(() => {
         return saveReviewer({ 
-            name: 'Betty Crocker', 
-            company: 'Pancake Hut'
+            name: 'Betty Crocker',
+            email: 'crock@email.com',
+            company: 'Pancake Hut',
+            roles: ['admin']
         })
             .then(data => {
                 reviewerCrocker = data;

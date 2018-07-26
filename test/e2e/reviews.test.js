@@ -51,7 +51,9 @@ describe('Reviews API', () => {
     beforeEach(() => {
         return saveReviewer({
             name: 'Reviewer Sue',
-            company: 'ReviewsRUs'    
+            email: 'sue@email.com',
+            company: 'ReviewsRUs',
+            roles: ['admin']   
         })
             .then(data => reviewerSue = data);
     });

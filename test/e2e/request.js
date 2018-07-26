@@ -12,6 +12,14 @@ request.checkOk = res => {
     return res;
 };
 
+request.getToken = () => request
+    .post('/api/auth/signup')
+    .send({
+        email: 'crock@email.com',
+        password: 'abc12345'
+    })
+    .then(({ body }) => body.token);
+
 after(done => server.close(done));
 
 module.exports = request;
