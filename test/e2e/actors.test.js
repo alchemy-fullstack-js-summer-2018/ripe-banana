@@ -14,7 +14,7 @@ describe.only('Actor API', () => {
         dropCollection('studios');
     });
 
-    let adminCheck;
+    let token;
     beforeEach(() => {
         let data = {
             name: 'Mariah',
@@ -28,10 +28,10 @@ describe.only('Actor API', () => {
             .send(data)
             .then(checkOk)
             .then(({ body }) => {
-                adminCheck = body.adminCheck;
+                token = body.token;
             });
     });
-
+    /// CREATE AN ACTOR ///
     let easton;
     beforeEach(() => {
         return saveActor({
@@ -39,45 +39,69 @@ describe.only('Actor API', () => {
             dob: new Date(1990, 10, 19),
             pob: 'Phoenix'
 
-        })
+        },
+        token
+        )
             .then(data => easton = data);
     });
+
     ///// TEST ////
     it('saves an actor', () => {
         assert.isOk(easton._id);
     });
 
 
-    //// END TEST ///
-    let studio;
+    //// CREATE A STUDIO ///
+    let alchemy;
     beforeEach(() => {
-        return request  
-            .post('/api/studios')
-            .send({ name: 'SortaGood Pictures' })
-            .then(({ body }) => studio = body);
+        return saveStudio({
+            name: 'Alchemy Pictures',
+            address: {
+                city: 'Portland',
+                state: 'OR',
+                country: 'USA'
+            }
+        },
+        token
+        )
+            .then(data => {
+                alchemy = data;
+            });
     });
 
+    /// CREATE A FILM ///
     let film;
     beforeEach(() => {
-        return request
-            .post('/api/films')
-            .send({
-                title: 'Return of Injoong',
-                studio: studio._id,
-                released: 2017,
-                cast: [{
-                    role: '',
-                    actor: easton._id
-                }]
-            })
-            .then(({ body }) => film = body);
+        return saveFilm({
+            title: 'Return of Injoong',
+            studio: alchemy._id,
+            released: 2017,
+            cast: [{
+                actor: easton._id
+            }]
+        },
+        token
+        )
+            .then(body => {
+                console.log(body);
+                film = body;
+            });
+            
     });
 
    
     ///// TEST ////
     it('gets all actors', () => {
         let mark;
-        return save({ name: 'Mark' })
+        return saveActor(
+            { 
+                name: 'Mark',
+                dob: '1966',
+                pob: 'NJ'
+            
+            },
+            token
+        )
             .then(_mark => {
                 mark = _mark;
                 return request.get('/api/actors');  
@@ -85,12 +109,15 @@ describe.only('Actor API', () => {
             .then(checkOk)
             
             .then(({ body }) => {
-                
-                assert.deepEqual(body, [easton, mark]);
+                delete body.__v;
+                assert.deepEqual(body[0].name, easton.name);
+                assert.deepEqual(body[1].name, mark.name);
+
             });
     });
     //// END TEST ///
-    const makeSimple = (easton, film) => {
+    
+    const makeSimpleActor = (easton, film) => {
         const simple = {
             _id: easton._id,
             name: easton.name,
@@ -100,28 +127,32 @@ describe.only('Actor API', () => {
         if(film){
             simple.films = [{
                 _id: film._id,
-                title: film.title,
-                released: film.released
+                released: film.released,
+                title: film.title
+                
             }];
         }
         return simple;
     };
-    
     ///// TEST ////
-    it('gets an actor by id', () => {
+    it.only('gets an actor by id', () => {
         return request
             .get(`/api/actors/${easton._id}`)
-            .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
-                assert.deepEqual(body, makeSimple(easton, film));
+                console.log(body);
+                console.log(makeSimpleActor(easton, film));
+                assert.deepEqual(body, makeSimpleActor(easton, film));
             });
     });
+    
+    
     ///// TEST ////
     it('updates an actor', () => {
         easton.name = 'Injoong';
         return request 
             .put(`/api/actors/${easton._id}`)
+            .set('Authorization', token)
             .send(easton)
             .then(checkOk)
             .then(({ body }) => {
