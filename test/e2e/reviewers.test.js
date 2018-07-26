@@ -34,7 +34,7 @@ describe('Reviewers API', () => {
             released: 2013,
             cast: []
         };
-        return save(data, 'films')
+        return saveWithAuth(data, 'films', token)
             .then(body => {
                 banks = body;
             });
@@ -80,7 +80,6 @@ describe('Reviewers API', () => {
     it('returns all reviewers on GET', () => {
         return request
             .get('/api/reviewers')
-            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, [mariah]);
@@ -111,7 +110,6 @@ describe('Reviewers API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
-                delete mariah.reviews;
                 assert.deepEqual(body, mariah);
             });
     });
