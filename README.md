@@ -18,8 +18,8 @@ This is a database of movies with reviews, movie studios, actors, reviews, and r
     * `/api/studios/:id` - response will be a studio object with the corresponding id.
 * `/api/actors` - response will be an array of actor objects.
     * `/api/actors/:id` - response will be a actor object with the corresponding id.
-* `/api/reviewers` - response will be an array of reviewer objects.
-    * `/api/reviewers/:id` - response will be a reviewer object with the corresponding id.
+* `/api/users` - response will be an array of user objects.
+    * `/api/users/:id` - response will be a user object with the corresponding id.
 * `/api/reviews` - response will be an array of review objects.
 
 ### Methods:
