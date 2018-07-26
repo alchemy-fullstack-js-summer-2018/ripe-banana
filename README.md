@@ -25,8 +25,8 @@ This is a database of movies with reviews, movie studios, actors, reviews, and r
 ### Methods:
 * `POST` - will post an object
 * `GET` - will get an array of all objects
-* `GET<id>` - will get an object
-* `PUT<id>` - will update a specified object
+* `GET <id>` - will get an object
+* `PUT <id>` - will update a specified object
     * Only **actors** and **reviewers** can be updated.
-* `DELETE<id>` - will delete a specified object
+* `DELETE <id>` - will delete a specified object
     * However, **studios** and **actors** cannot be deleted if they have **films** attached to them.
