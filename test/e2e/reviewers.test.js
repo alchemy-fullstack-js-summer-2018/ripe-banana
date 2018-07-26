@@ -6,11 +6,11 @@ const { saveActor, saveFilm, saveReview, saveStudio, makeReviewer } = require('.
 
 describe('Reviewers API', () => {
 
+    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('reviewers'));
     beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('films'));
-    beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('users'));
 
     let token;
@@ -60,7 +60,8 @@ describe('Reviewers API', () => {
                 state: 'California',
                 country: 'USA'
             }
-        })
+        }, 
+        token)
             .then(data => {
                 warner = data;
             });
@@ -70,7 +71,8 @@ describe('Reviewers API', () => {
     beforeEach(() => {
         return saveActor({
             name: 'Robert Downey Jr.'
-        })
+        },
+        token)
             .then(data => {
                 downey = data;
             });       
@@ -86,7 +88,8 @@ describe('Reviewers API', () => {
                 role: 'Tony Stark',
                 actor: downey._id
             }]
-        })
+        },
+        token)
             .then(data => {
                 avengers = data;
             });
@@ -99,7 +102,8 @@ describe('Reviewers API', () => {
             reviewer: kevin._id,
             review: 'this is good',
             film: avengers._id,
-        })
+        },
+        token)
             .then(data => {
                 review1 = data;
             });

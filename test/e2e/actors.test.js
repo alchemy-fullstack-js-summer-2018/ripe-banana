@@ -4,12 +4,13 @@ const { dropCollection } = require('./db');
 const { checkOk } = request;
 const {  saveFilm, saveStudio } = require('./_helpers');
 
-describe.only('Actors API', () => {
-
-    beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('films'));
+describe('Actors API', () => {
+    
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('users'));
 
     let token;
@@ -17,7 +18,7 @@ describe.only('Actors API', () => {
         return request
             .post('/api/auth/signup')
             .send({
-                email: 'me@me.com',
+                email: 'you@me.com',
                 password: '123',
                 roles: ['admin']
             })
@@ -25,18 +26,6 @@ describe.only('Actors API', () => {
             .then(({ body }) => {
                 token = body.token;
             });
-    });
-
-    let depp;
-    beforeEach(() => {
-        return saveActor({
-            name: 'Johnny Depp',
-            dob: '1960',
-            pob: 'Wherever, USA'
-        })
-            .then(data => {
-                depp = data;
-            });          
     });
 
     function saveActor(actor) {
@@ -51,6 +40,19 @@ describe.only('Actors API', () => {
             });
     }
 
+    let depp;
+    beforeEach(() => {
+        return saveActor({
+            name: 'Johnny Depp',
+            dob: '1960',
+            pob: 'Wherever, USA'
+        })
+            .then(data => {
+                depp = data;
+            });          
+    });
+
+
     let univision;
     beforeEach(() => {
         return saveStudio({
@@ -60,7 +62,8 @@ describe.only('Actors API', () => {
                 state: 'Oregon',
                 country: 'USA'
             }
-        })
+        },
+        token)
             .then(data => {
                 univision = data;
             });
@@ -75,7 +78,8 @@ describe.only('Actors API', () => {
             cast: [{
                 actor: depp._id
             }]
-        })
+        },
+        token)
             .then(data => {
                 dogDay = data;
             });

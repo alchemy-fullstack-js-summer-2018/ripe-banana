@@ -2,15 +2,15 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveReview, saveStudio, makeReview } = require('./_helpers');
+const { saveActor, saveFilm, saveReviewer, saveStudio, makeReview } = require('./_helpers');
 
 describe('Reviews API', () => {
 
+    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('reviewers'));
     beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('films'));
-    beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('actors'));
     beforeEach(() => dropCollection('users'));
 
     let token;
@@ -28,11 +28,11 @@ describe('Reviews API', () => {
             });
     });
 
-    function saveReviewer(reviewer) {
+    function saveReview(review) {
         return request
-            .post('/api/reviewers')
+            .post('/api/reviews')
             .set('Authorization', token)
-            .send(reviewer)
+            .send(review)
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
@@ -45,7 +45,8 @@ describe('Reviews API', () => {
         return saveReviewer({
             name: 'Roger Ebert',
             company: 'Ebert Reviews'
-        })
+        },
+        token)
             .then(data => {
                 ebert = data;
             });
@@ -60,7 +61,8 @@ describe('Reviews API', () => {
                 state: 'California',
                 country: 'USA'
             }
-        })
+        },
+        token)
             .then(data => {
                 warner = data;
             });
@@ -70,7 +72,8 @@ describe('Reviews API', () => {
     beforeEach(() => {
         return saveActor({
             name: 'Robert Downey Jr.'
-        })
+        },
+        token)
             .then(data => {
                 downey = data;
             });       
@@ -86,7 +89,8 @@ describe('Reviews API', () => {
                 role: 'Tony Stark',
                 actor: downey._id
             }]
-        })
+        },
+        token)
             .then(data => {
                 avengers = data;
             });
@@ -99,7 +103,8 @@ describe('Reviews API', () => {
             reviewer: ebert._id,
             review: 'this is good',
             film: avengers._id,
-        })
+        },
+        token)
             .then(data => {
                 review1 = data;
             });

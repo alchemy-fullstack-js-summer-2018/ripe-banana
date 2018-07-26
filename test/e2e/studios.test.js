@@ -2,7 +2,7 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveStudio,  makeStudio } = require('./_helpers');
+const { saveActor, saveFilm,  makeStudio } = require('./_helpers');
 
 describe('Studios API', () => {
 
@@ -27,6 +27,18 @@ describe('Studios API', () => {
                 token = body.token;
             });
     });
+
+    function saveStudio(studio) {
+        return request
+            .post('/api/studios')
+            .set('Authorization', token)
+            .send(studio)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
+    }
  
     let univision;
     beforeEach(() => {
@@ -37,7 +49,8 @@ describe('Studios API', () => {
                 state: 'Oregon',
                 country: 'USA'
             }
-        })
+        },
+        token)
             .then(data => {
                 univision = data;
             });
@@ -47,7 +60,8 @@ describe('Studios API', () => {
     beforeEach(() => {
         return saveActor({
             name: 'Al Pacino'
-        })
+        },
+        token)
             .then(data => {
                 pacino = data;
             });       
@@ -62,7 +76,8 @@ describe('Studios API', () => {
             cast: [{
                 actor: pacino._id
             }]
-        })
+        },
+        token)
             .then(data => {
                 dogDay = data;
             });

@@ -2,15 +2,15 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor, saveFilm, saveReview, saveStudio, saveReviewer, makeFilm, makeFilm2 } = require('./_helpers');
+const { saveActor, saveReview, saveStudio, saveReviewer, makeFilm, makeFilm2 } = require('./_helpers');
 
 describe('Films API', () => {
 
-    beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('actors'));
-    beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('reviews'));
     beforeEach(() => dropCollection('users'));
 
     let token;
@@ -28,12 +28,24 @@ describe('Films API', () => {
             });
     });
 
+    function saveFilm(film) {
+        return request
+            .post('/api/films')
+            .set('Authorization', token)
+            .send(film)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                return body;
+            });
+    }
     let ebert;
     beforeEach(() => {
         return saveReviewer({
             name: 'Roger Ebert',
             company: 'Ebert Reviews'
-        })
+        },
+        token)
             .then(data => {
                 ebert = data;
             });
@@ -43,7 +55,8 @@ describe('Films API', () => {
     beforeEach(() => {
         return saveStudio({
             name: 'Fox'
-        })
+        },
+        token)
             .then(data => {
                 fox = data;
             });
@@ -53,7 +66,8 @@ describe('Films API', () => {
     beforeEach(() => {
         return saveActor({
             name: 'The Rock'
-        })
+        },
+        token)
             .then(data => {
                 rock = data;
             });       
@@ -82,7 +96,8 @@ describe('Films API', () => {
             reviewer: ebert._id,
             review: 'this is good',
             film: scarface._id,
-        })
+        },
+        token)
             .then(data => {
                 review1 = data;
             });
