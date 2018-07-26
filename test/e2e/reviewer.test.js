@@ -9,18 +9,23 @@ describe('Reviewer API', () => {
     beforeEach(() => dropCollection('reviewers'));
 
     let token;
+    let chip;
     beforeEach(() => {
+        let data = {
+            name: 'Chip Ellsworth III',
+            company: 'Fermented Banana',
+            email: 'chip@fermentedbanana.com',
+            password: 'pw123'
+        };
+
         return request
             .post('/api/reviewers/signup')
-            .send({
-                name: 'Chip Ellsworth III',
-                company: 'Fermented Banana',
-                email: 'chip@fermentedbanana.com',
-                password: 'pw123'
-            })
+            .send(data)
             .then(checkOk)
             .then(({ body }) => {
-                token = body;
+                token = body.token;
+                chip = body.reviewer;
+                console.log('chip', chip);
             }); 
     });
 
@@ -29,12 +34,10 @@ describe('Reviewer API', () => {
     });
 
     it('signs in a user', () => {
+        delete chip._id;
         return request 
             .post('/api/reviewers/signin')
-            .send({
-                email: 'chip@fermentedbanana.com',
-                password: 'pw123'
-            })
+            .send(chip)
             .then(checkOk)
             .then(({ body }) => {
                 // console.log('body***', body);
@@ -42,51 +45,57 @@ describe('Reviewer API', () => {
             });
     });
 
-    it.skip('fails on wrong password', () => {
-        return request 
-            .post('/api/reviewers/signin')
-            .send({
-                email: 'chip@fermentedbanana.com',
-                password: 'bad'
-            })
-            .then(res => {
-                console.log('***res***', res.body);
-                assert.equal(res.status, 401);
-                assert.equal(res.body.error, 'Invalid email and/or password');
-            });
+    it('verifies a token', () => {
+        return request
+            .get('/api/reviewers/verify')
+            .set('Authorization', token)
+            .then(checkOk);
     });
 
-//     function save(reviewer) {
-//         return request
-//             .post('/api/reviewers')
-//             .send(reviewer)
-//             .then(checkOk)
-//             .then(({ body }) => body);
-//     }
+    // it('fails on wrong password', () => {
+    //     return request 
+    //         .post('/api/reviewers/signin')
+    //         .send({
+    //             email: 'chip@fermentedbanana.com',
+    //             password: 'bad'
+    //         })
+    //         .then(res => {
+    //             console.log('***res***', res.body);
+    //             assert.equal(res.status, 401);
+    //             assert.equal(res.body.error, 'Invalid email and/or password');
+    //         });
+    // });
 
-//     let tyrone;
-//     let chip;
+    //     function save(reviewer) {
+    //         return request
+    //             .post('/api/reviewers')
+    //             .send(reviewer)
+    //             .then(checkOk)
+    //             .then(({ body }) => body);
+    //     }
 
-//     beforeEach(() => {
-//         return save({
-//             name: 'Tyrone Payton',
-//             company: 'Fermented Banana'
-//         })
-//             .then(data => tyrone = data);
-//     });
+    //     let tyrone;
+    //     let chip;
 
-//     beforeEach(() => {
-//         return save({
-//             name: 'Chip Ellsworth III',
-//             company: 'Fermented Banana'
-//         })
-//             .then(data => chip = data);
-//     });
+    //     beforeEach(() => {
+    //         return save({
+    //             name: 'Tyrone Payton',
+    //             company: 'Fermented Banana'
+    //         })
+    //             .then(data => tyrone = data);
+    //     });
 
-//     it('saves a reviewer', () => {
-//         assert.isOk(chip._id);
-//         assert.isOk(tyrone._id);
-//     });
+    //     beforeEach(() => {
+    //         return save({
+    //             name: 'Chip Ellsworth III',
+    //             company: 'Fermented Banana'
+    //         })
+    //             .then(data => chip = data);
+    //     });
+
+    it('saves a reviewer', () => {
+        assert.isOk(chip._id);
+    });
 
 //     it('gets a reviewer by id', () => {
 //         return request

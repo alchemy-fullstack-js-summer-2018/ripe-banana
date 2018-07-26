@@ -23,13 +23,13 @@ request.simplify = data => {
     return simple;
 };
 
-// request.getToken = () => request
-//     .post('/api/auth/signup')
-//     .send({
-//         email: 'chip@fermentedbanana.com',
-//         password: 'pw123'
-//     })
-//     .then(({ body }) => body.token);
+request.getToken = () => request
+    .post('/api/reviewers/signup')
+    .send({
+        email: 'chip@fermentedbanana.com',
+        password: 'pw123'
+    })
+    .then(({ body }) => body.token);
 
 
 after(done => server.close(done));
