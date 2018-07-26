@@ -2,8 +2,9 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
+const { saveActor } = require('./helpers');
 
-describe('Actor API', () => {
+describe.only('Actor API', () => {
 
     beforeEach(() => {
         dropCollection('reviews');
