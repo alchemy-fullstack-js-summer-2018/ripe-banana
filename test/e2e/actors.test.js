@@ -2,7 +2,7 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
-const { saveActor } = require('./helpers');
+const { saveActor, saveFilm, saveStudio } = require('./helpers');
 
 describe.only('Actor API', () => {
 
@@ -14,6 +14,8 @@ describe.only('Actor API', () => {
         dropCollection('studios');
     });
 
+    let token;
+
     function save(actor) {
         return request
             .post('/api/actors')
@@ -22,16 +24,19 @@ describe.only('Actor API', () => {
             .then(({ body }) => body);
     }
 
-    let actor;
-
+    let easton;
     beforeEach(() => {
-        return save({
+        return saveActor({
             name: 'Easton',
             dob: new Date(1990, 10, 19),
             pob: 'Phoenix'
 
         })
-            .then(data => actor = data);
+            .then(data => easton = data);
+    });
+
+    it('saves an actor', () => {
+        assert.isOk(easton._id);
     });
 
     let studio;
@@ -58,9 +63,7 @@ describe.only('Actor API', () => {
             .then(({ body }) => film = body);
     });
 
-    it('saves an actor', () => {
-        assert.isOk(actor._id);
-    });
+   
 
     it('gets all actors', () => {
         let mark;
