@@ -1,5 +1,6 @@
 const { assert } = require('chai');
-const { request, save, checkOk } = require('./request');
+const  request  = require('./request');
+const { save, checkOk }  = request;
 const { dropCollection } = require('./db');
 
 const makeSimple = (actor, films) => {

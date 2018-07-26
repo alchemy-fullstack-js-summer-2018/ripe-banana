@@ -18,13 +18,13 @@ request.checkOk = res => {
 //     return res;
 // };
 
-// const save = (path, data) => {
-//     return request
-//         .post(`/api/${path}`)
-//         .send(data)
-//         .then(checkOk)
-//         .then(({ body }) => body);
-// };
+request.save = (path, data) => {
+    return request
+        .post(`/api/${path}`)
+        .send(data)
+        .then(this.checkOk)
+        .then(({ body }) => body);
+};
 
 request.getToken = () => request
     .post('/api/auth/signup')
@@ -36,8 +36,5 @@ request.getToken = () => request
 
 after(done => server.close(done));
 
-module.exports = {
-    request,
-    // save
-    // checkOk
-};
+module.exports = request;
+    

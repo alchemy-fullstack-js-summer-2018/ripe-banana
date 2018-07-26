@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const { request } = require('./request');
+const  request = require('./request');
 const { dropCollection } = require('./db');
 
 const { checkOk } = request;
@@ -57,7 +57,7 @@ describe('Auth API', () => {
             })
             .then(res => {
                 assert.equal(res.status, 401);
-                assert.equal(res.body.error, 'Invalid email or password')
+                assert.equal(res.body.error, 'Invalid email or password');
             });
     });
 

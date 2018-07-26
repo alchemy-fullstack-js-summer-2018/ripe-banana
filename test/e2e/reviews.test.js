@@ -11,7 +11,10 @@ let inceptionReview2;
 
 const justin = {
     name: 'Justin Chang',
-    company: 'The Hollywood Reporter' 
+    company: 'The Hollywood Reporter',
+    email: 'justin@email.com',
+    password:'pwd123'
+
 };
 
 const leo = { 
@@ -73,7 +76,7 @@ describe('Reviews API', () => {
 
     beforeEach(() => {
         return request
-            .post('/api/reviewers')
+            .post('/api/auth/signup')
             .send(justin)
             .then(checkOk)
             .then(({ body }) => justinChang = body);
