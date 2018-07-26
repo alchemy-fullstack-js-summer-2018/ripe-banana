@@ -4,7 +4,7 @@ const { dropCollection } = require('./db');
 
 const { checkOk } = request;
 
-describe('Auth API', () => {
+describe.only('Auth API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
 
@@ -51,7 +51,7 @@ describe('Auth API', () => {
             });
     });
 
-    it.skip('fails on wrong password', () => {
+    it('fails on wrong password', () => {
         return request
             .post('/api/auth/signin')
             .send({
@@ -66,7 +66,7 @@ describe('Auth API', () => {
             });
     });
 
-    it.skip('cannot signup with same email', () => {
+    it('cannot signup with same email', () => {
         return request
             .post('/api/auth/signup')
             .send({
