@@ -2,6 +2,7 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { checkOk } = request;
+const { saveActor, saveFilm, saveReview, saveStudio } = require('./helpers');
 
 describe('Review API', () => {
 
@@ -10,57 +11,96 @@ describe('Review API', () => {
         dropCollection('reviewers');
         dropCollection('films');
         dropCollection('studios');
+        dropCollection('actors');
     });
 
-    let reviewer;
+    let token;
+    let kevin;
     beforeEach(() => {
+        let data = { 
+            name: 'Kevin',
+            company: 'Kevin at the Movies, LLC',
+            email: 'kevin@themovies.com',
+            roles: ['admin'],
+            hash: '09870987'
+        };
         return request
-            .post('/api/reviewers')
-            .send({ 
-                name: 'Kevin',
-                company: 'Kevin at the Movies, LLC',
-                email: 'kevin@themovies.com',
-                roles: ['admin'],
-                hash: '09870987'
-            })
-            .then(({ body }) => reviewer = body);
+            .post('/api/auth/signup')
+            .send(data)
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+                delete body.kevin.__v;
+                kevin = body.kevin;
+            });
+
     });
 
     let studio;
     beforeEach(() => {
-        return request  
-            .post('/api/studios')
-            .send({ name: 'SortaGood Pictures' })
-            .then(({ body }) => studio = body);
+        return saveStudio(
+            {
+                name: 'SortaGood Pictures',
+                address: {
+                    city: 'Portland',
+                    state: 'OR',
+                    country: 'USA'
+                }
+            },
+            token
+        )
+            .then(data => {
+                studio = data;
+            });
+            
+    });
+
+    let arthur;
+    beforeEach(() => {
+        return saveActor(
+            {
+                name: 'Arthur Jen'
+            },
+            token
+        )
+            .then(data => { 
+                arthur = data;
+            });
     });
 
     let film;
     beforeEach(() => {
-        return request
-            .post('/api/films')
-            .send({
+        return saveFilm(
+            {
                 title: 'Return of Injoong',
                 studio: studio._id,
-                released: 2017
-            })    
-            .then(({ body }) => {
-                film = body;
+                released: 2017,
+                cast: [{
+                    role: 'Injoong Yoon',
+                    actor: arthur._id
+                }]
+            },
+            token
+        )    
+            .then(data => {
+                film = data;
             });
     });
     
     
     let review;
     beforeEach(() => {
-        return request
-            .post('/api/reviews')
-            .send({
+        return saveReview(
+            {
                 rating: 4,
-                reviewer: reviewer._id,
+                reviewer: kevin._id,
                 review: 'Kevin says this is the 2nd best Injoong movie out there.',
                 film: film._id,
-            })
-            .then(({ body }) => {
-                review = body;
+            },
+            token
+        )
+            .then(data => {
+                review = data;
             }); 
     });
 
@@ -80,7 +120,6 @@ describe('Review API', () => {
         return simple;
     };
 
-    
 
     it('saves a review', () => {
         assert.isOk(review._id);
