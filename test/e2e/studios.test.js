@@ -9,6 +9,15 @@ describe('Studio API', () => {
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('reviewers'));
 
+    function save(studio) {
+        return request
+            .post('/api/studios')
+            .set('Authorization', token)
+            .send(studio)
+            .then(checkOk)
+            .then(({ body }) => body);
+    }
+
     let token;
     beforeEach(() => {
         return request
@@ -22,15 +31,6 @@ describe('Studio API', () => {
             })
             .then(({ body }) => token = body.token);
     });
-
-    function save(studio) {
-        return request
-            .post('/api/studios')
-            .set('Authorization', token)
-            .send(studio)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     let studio;
     beforeEach(() => {
@@ -60,10 +60,6 @@ describe('Studio API', () => {
             });
     });
 
-    it('saves a studio', () => {
-        assert.isOk(studio._id);
-    });
-
     const makeSimple = (studio) => {
         const simple = {
             _id: studio._id,
@@ -87,6 +83,10 @@ describe('Studio API', () => {
         }
         return simple;
     };
+
+    it('saves a studio', () => {
+        assert.isOk(studio._id);
+    });
 
     it('gets all studios', () => {
         let bmovie;

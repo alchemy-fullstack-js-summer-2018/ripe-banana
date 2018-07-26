@@ -24,10 +24,6 @@ describe('Reviewer model', () => {
         assert.notEqual(reviewer.hash, data.password, 'hash is not the same as password.');
         assert.isDefined(reviewer.hash, 'hash is defined');
         assert.notEqual(reviewer.hash, data.password, 'hash does not equal password');
-        
-        //const json = reviewer.toJSON();
-        //delete json._id;
-        //assert.deepEqual(json, data);
         assert.isUndefined(reviewer.validateSync());
         assert.isTrue(reviewer.comparePassword(data.password), 'compare good password');
         assert.isFalse(reviewer.comparePassword('bad password'), 'compare bad password');

@@ -13,6 +13,15 @@ describe('Actor API', () => {
         dropCollection('studios');
     });
 
+    function save(actor) {
+        return request
+            .post('/api/actors')
+            .set('Authorization', token)
+            .send(actor)
+            .then(checkOk)
+            .then(({ body }) => body);
+    }
+    
     let token;
     beforeEach(() => {
         return request
@@ -26,15 +35,6 @@ describe('Actor API', () => {
             })
             .then(({ body }) => token = body.token);
     });
-
-    function save(actor) {
-        return request
-            .post('/api/actors')
-            .set('Authorization', token)
-            .send(actor)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     let actor;
     beforeEach(() => {

@@ -13,6 +13,15 @@ describe('Films API', () => {
         dropCollection('studios');
     });
 
+    function save(film) {
+        return request
+            .post('/api/films')
+            .send(film)
+            .set('Authorization', token)
+            .then(checkOk)
+            .then(({ body }) => body);
+    }
+
     let token;
     let reviewer;
     beforeEach(() => {
@@ -30,15 +39,6 @@ describe('Films API', () => {
                 reviewer = body.reviewer;
             });
     });
-
-    function save(film) {
-        return request
-            .post('/api/films')
-            .send(film)
-            .set('Authorization', token)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     let studio;
     beforeEach(() => {

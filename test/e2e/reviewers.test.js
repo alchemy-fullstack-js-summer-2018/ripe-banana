@@ -13,14 +13,6 @@ describe('Reviewer API', () => {
         dropCollection('studios');
     });
 
-    function save(reviewer) {
-        return request
-            .post('/api/reviewers/signup')
-            .send(reviewer)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
-
     let token; 
     let bobby;
     beforeEach(() => {
@@ -39,15 +31,6 @@ describe('Reviewer API', () => {
                 bobby = body.reviewer;
             });
     });
-
-    // let bobby;
-    // beforeEach(() => {
-    //     return save({
-    //         name: 'Bobby',
-    //         company: 'Unemployed'
-    //     })
-    //         .then(data => bobby = data);
-    // });
 
     let studio;
     beforeEach(() => {
@@ -125,10 +108,6 @@ describe('Reviewer API', () => {
         assert.isDefined(token);
     });
 
-    // it('verifies a token', () => {
-    //     assert.isDefined(token);
-    // });
-
     it('can sign in a user', () => {
         return request
             .post('/api/reviewers/signin')
@@ -148,14 +127,18 @@ describe('Reviewer API', () => {
 
     it('gets all reviewers', () => {
         let carrie;
-        return save({ 
-            name: 'carrie',
-            company: 'Student',
-            email: 'carrie@portland.com',
-            password: 'carrie'
-        })
-            .then(_carrie => {
-                carrie = _carrie.reviewer;
+        return request
+            .post('/api/reviewers/signup')
+            .set('Authorization', token)
+            .send({ 
+                name: 'carrie',
+                company: 'Student',
+                email: 'carrie@portland.com',
+                password: 'carrie'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                carrie = body.reviewer;
                 return request.get('/api/reviewers');  
             })
             .then(checkOk)
