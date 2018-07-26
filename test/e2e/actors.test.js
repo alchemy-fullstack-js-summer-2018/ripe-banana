@@ -83,7 +83,6 @@ describe.only('Actor API', () => {
         token
         )
             .then(body => {
-                console.log(body);
                 film = body;
             });
             
@@ -134,14 +133,13 @@ describe.only('Actor API', () => {
         }
         return simple;
     };
+
     ///// TEST ////
-    it.only('gets an actor by id', () => {
+    it('gets an actor by id', () => {
         return request
             .get(`/api/actors/${easton._id}`)
             .then(({ body }) => {
                 delete body.__v;
-                console.log(body);
-                console.log(makeSimpleActor(easton, film));
                 assert.deepEqual(body, makeSimpleActor(easton, film));
             });
     });
@@ -156,28 +154,29 @@ describe.only('Actor API', () => {
             .send(easton)
             .then(checkOk)
             .then(({ body }) => {
+                delete body.__v;
                 assert.deepEqual(body, easton);
             });
     });
     ///// TEST ////
     it('removes an actor', () => {
-        let mario;
-        return save({ name: 'Mario' })
-            .then(data => mario = data)
-            .then(() => {
+        
+        return request
+            .delete(`/api/films/${film._id}`)
+            .set('Authorization', token)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: true });
                 return request
-                    .delete(`/api/actors/${mario._id}`)
-                    .then(checkOk)
-                    .then(res => {
-                        assert.deepEqual(res.body, { removed: true });
-                        return request.get('/api/actors');
-                    })
-                    .then(checkOk)
-                    .then(({ body }) => {
-                        assert.deepEqual(body, [easton]);
-                    });
-
+                    .delete(`/api/actors/${easton._id}`)
+                    .set('Authorization', token);
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, { removed: true });
             });
 
     });
+
 });
+
