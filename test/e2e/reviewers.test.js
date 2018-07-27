@@ -32,7 +32,7 @@ describe('Reviewers API', () => {
             .then(({ body }) => body);
     }
 
-    //let crocker;
+    let crocker;
     // beforeEach(() => {
     //     return save({ 
     //         name: 'Betty Crocker',
