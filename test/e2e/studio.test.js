@@ -6,18 +6,40 @@ const { checkOk } = request;
 
 describe('Studios API', () => {
 
-    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => {
+        dropCollection('reviewers');   
+        dropCollection('studios');
+    });
+
+
+    let universal;
+    let paramount;
+    let token;
+
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                name: 'Chip Ellsworth III',
+                company: 'Fermented Banana',
+                email: 'chip@fermentedbanana.com',
+                password: 'pw123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     function save(studio) {
         return request
             .post('/api/studios')
+            .set('Authorization', token)
             .send(studio)
             .then(checkOk)
             .then(({ body }) => body);
     }
-
-    let universal;
-    let paramount;
 
     beforeEach(() => {
         return save({
@@ -72,6 +94,7 @@ describe('Studios API', () => {
     it('deletes a studio', () => {
         return request
             .delete(`/api/studios/${universal._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(res => {
                 assert.deepEqual(res.body, { removed: true });

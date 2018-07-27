@@ -21,7 +21,6 @@ describe('verify auth middleware', () => {
         };
 
         const next = () => {
-            // console.log(token);
             assert.equal(req.user.id, user._id, 'payload is assigned to req as user');
             done();
         };

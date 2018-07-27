@@ -5,18 +5,38 @@ const { checkOk } = request;
 
 describe('Actors API', () => {
 
-    beforeEach(() => dropCollection('actors'));
+    beforeEach(() => {
+        dropCollection('reviewers');
+        dropCollection('actors');
+    });
+
+    let winonaRyder, donJohnson;
+    let token;
+
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                name: 'Chip Ellsworth III',
+                company: 'Fermented Banana',
+                email: 'chip@fermentedbanana.com',
+                password: 'pw123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
 
     function save(actor) {
         return request
             .post('/api/actors')
+            .set('Authorization', token)
             .send(actor)
             .then(checkOk)
             .then(({ body }) => body);
     }
-
-    let winonaRyder;
-    let donJohnson;
 
     beforeEach(() => {
         return save({
@@ -63,19 +83,21 @@ describe('Actors API', () => {
     });
 
     it('updates an actor', () => {
-        winonaRyder.pob = 'kleptoland';
+        winonaRyder.pob = 'Kleptoland';
         return request
             .put(`/api/actors/${winonaRyder._id}`)
+            .set('Authorization', token)
             .send(winonaRyder)
             .then(checkOk)
             .then(() => {
-                assert.equal(winonaRyder.pob, 'kleptoland');
+                assert.equal(winonaRyder.pob, 'Kleptoland');
             });
     });
 
     it('deletes an actor', () => {
         return request
             .delete(`/api/actors/${donJohnson._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(res => {
                 assert.deepEqual(res.body, { removed: true });

@@ -46,7 +46,6 @@ describe('Auth API', () => {
             })
             .then(checkOk)
             .then(({ body }) => {
-                console.log('body***', body);
                 assert.isDefined(body.token);
             });
     });
