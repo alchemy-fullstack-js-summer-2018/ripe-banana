@@ -64,6 +64,13 @@ describe.only('Reviewers API', () => {
             });
     });
 
+    it('checks token', () => {
+        return request
+            .get('/api/reviewers/verify')
+            .set('Authorization', token)
+            .then(checkOk);
+    });
+
     it.skip('gets a reviewer by id', () => {
         return request
             .get(`/api/reviewers/${crocker._id}`)
