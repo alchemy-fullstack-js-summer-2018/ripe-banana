@@ -10,6 +10,7 @@ describe('Auth API', () => {
 
     let token;
     beforeEach(() => {
+        
         return request
             .post('/api/auth/signup')
             .send({
