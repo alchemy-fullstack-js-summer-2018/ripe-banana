@@ -4,12 +4,11 @@ const { dropCollection } = require('./db');
 
 const { checkOk } = request;
 
-describe.only('Reviewers API', () => {
+describe('Reviewers API', () => {
 
     beforeEach(() => dropCollection('reviewers'));
 
     let token;
-    let crocker;
     beforeEach(() => {
         return signup(
             {
