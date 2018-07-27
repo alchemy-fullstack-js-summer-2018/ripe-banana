@@ -3,3 +3,6 @@ node_js: "10"
 
 services:
   - mongodb
+
+env: 
+  - APP_SECRET=publicly-secret
