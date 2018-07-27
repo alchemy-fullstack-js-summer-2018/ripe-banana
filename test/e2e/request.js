@@ -18,9 +18,10 @@ request.checkOk = res => {
 //     return res;
 // };
 
-request.save = (path, data) => {
+request.save = (path, token = null, data) => {
     return request
         .post(`/api/${path}`)
+        .set('Authorization', token)
         .send(data)
         .then(this.checkOk)
         .then(({ body }) => body);

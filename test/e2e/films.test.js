@@ -111,7 +111,7 @@ describe('Films API', () => {
     
 
     beforeEach(() => {
-        return save('films', {
+        return save('films', token, {
             title: 'Inception',
             studio: legendaryStudio._id,
             released: 2010,
@@ -124,7 +124,7 @@ describe('Films API', () => {
     });
 
     beforeEach(() => {
-        return save('reviews', {
+        return save('reviews', token, {
             rating: 5,
             reviewer: justin._id,
             review: '...a loop within the movie\'s plot that binds space and time into...',
@@ -141,7 +141,7 @@ describe('Films API', () => {
 
     it('gets all films from the database', () => {
         let dunkirkFilm;
-        return save('films', {
+        return save('films', token, {
             title: 'Dunkirk',
             studio: legendaryStudio._id,
             released: 2017,
@@ -171,6 +171,7 @@ describe('Films API', () => {
     it('deletes a film', () => {
         return request
             .delete(`/api/films/${inceptionFilm._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: true });
             });
