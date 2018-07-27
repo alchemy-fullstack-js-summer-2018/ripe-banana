@@ -24,7 +24,6 @@ describe('Reviewer API', () => {
             .then(({ body }) => {
                 token = body.token;
                 tyrone = body.reviewer;
-                console.log('** token **', token);
             });
     });
 
