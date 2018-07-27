@@ -21,6 +21,9 @@ const makeWithoutVersion = (studio) => {
     return noVersion;
 };
 
+
+
+
 let leoActor;
 let warnerStudios;
 let netflixStudios;
@@ -51,22 +54,43 @@ const netflix = {
 
 describe('Studios API', () => {
 
+    let token;
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send({
+                name: 'Justin Chang',
+                company: 'The Hollywood Reporter',
+                email: 'justin@email.com',
+                password: 'pwd123',
+                roles: ['admin']
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+            });
+    });
+
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviews'));
 
     beforeEach(() => {
-        return save('studios', warner)
+        return save('studios', token, warner)
             .then(data => warnerStudios = data);
     });
 
     beforeEach(() => {
-        return save('studios', netflix)
+        return save('studios', token, netflix)
             .then(data => netflixStudios = data);
     });
 
     beforeEach(() => {
         return request
             .post('/api/actors')
+            .set('Authorization', token)
             .send(leo)
             .then(checkOk)
             .then(({ body }) => {
@@ -77,6 +101,7 @@ describe('Studios API', () => {
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'The Lion King',
                 studio: warnerStudios._id,
@@ -115,16 +140,18 @@ describe('Studios API', () => {
             });
     });
 
-    it.skip('deletes a studio (but not if its on a film)', () => {
+    it('deletes a studio (but not if its on a film)', () => {
         return request
             .delete(`/api/studios/${warnerStudios._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: false });
             });
     });
-    it.skip('deletes a studio if there are no associated films', () => {
+    it('deletes a studio if there are no associated films', () => {
         return request
             .delete(`/api/studios/${netflixStudios._id}`)
+            .set('Authorization', token)
             .then(({ body }) => {
                 assert.deepEqual(body, { removed: true });
             });

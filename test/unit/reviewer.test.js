@@ -5,7 +5,7 @@ const Reviewer = require('../../lib/models/reviewer');
 
 describe('Reviewer Model', () => {
 
-    it.only('validates good model', () => {
+    it('validates good model', () => {
         const data = {
             name: 'Justin Chang',
             company: 'The Hollywood Reporter',
