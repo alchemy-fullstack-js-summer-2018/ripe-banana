@@ -47,10 +47,23 @@ describe.only('Reviewers API', () => {
     //         });
     // });
 
-    it('saves a reviewer', () => {
+    it('signs up and saves a reviewer', () => {
         assert.isOk(token);
     });
     
+    it('can sign in a reviewer', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'crock@email.com',
+                password: 'abc12345'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
+    });
+
     it.skip('gets a reviewer by id', () => {
         return request
             .get(`/api/reviewers/${crocker._id}`)
