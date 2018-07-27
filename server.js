@@ -5,7 +5,7 @@ const connect = require('./lib/util/connect');
 connect('mongodb://localhost:27017/ripe-banana');
 
 const server = http.createServer(app);
-const port = process.env.port || 3000;
+const port = process.env.port || 3020;
 
 server.listen(port, () => {
     // eslint-disable-next-line

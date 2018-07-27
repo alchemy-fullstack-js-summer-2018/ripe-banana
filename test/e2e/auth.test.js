@@ -25,4 +25,17 @@ describe('Auth API', () => {
     it('signs up reviewer', () => {
         assert.isDefined(token);
     });
+
+    it('can sign in a reviewer', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'crock@email.com',
+                password: 'abc12345'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
+            });
+    });
 });

@@ -15,6 +15,7 @@ describe('Films API', () => {
         return request
             .post('/api/films')
             .send(film)
+            .set('Authorization', token)
             .then(checkOk)
             .then(({ body }) => body);
     }
@@ -23,7 +24,25 @@ describe('Films API', () => {
     let foster; // actor
     let warner; // studio
     let reviewerCrocker; // reviewer
+    let token;
     
+    // beforeEach(() => {
+    //     return request
+    //         .post('/api/reviewers/signup')
+    //         .send({
+    //             name: 'lil Debo',
+    //             email: 'lil@email.com',
+    //             company: 'Cat House',
+    //             password: '12345',
+    //             roles: ['admin']
+
+    //         })
+    //         .then(({ body }) => {
+    //             token = body.token;
+    //             reviewer = body.reviewer;
+    //         });
+
+    // })
     function saveReviewer(reviewer) {
         return request
             .post('/api/reviewers')
@@ -37,6 +56,7 @@ describe('Films API', () => {
             name: 'Betty Crocker',
             email: 'crock@email.com',
             company: 'Pancake Hut',
+            password: 'abc12345',
             roles: ['admin']
         })
             .then(data => {
