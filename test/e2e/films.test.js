@@ -103,6 +103,7 @@ describe('Films API', () => {
     beforeEach(() => {
         return request
             .post('/api/actors')
+            .set('Authorization', token)
             .send(leo)
             .then(checkOk)
             .then(({ body }) => leoActor = body);

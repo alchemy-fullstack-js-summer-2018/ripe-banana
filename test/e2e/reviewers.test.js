@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { save, checkOk } = request;
+const { checkOk } = request;
 const { dropCollection } = require('./db');
 
 describe('Reviewers API', () => {
@@ -22,7 +22,6 @@ describe('Reviewers API', () => {
                 company: 'The Hollywood Reporter',
                 roles: []
             })
-            // .then(checkOk)
             .then(({ body }) => {
                 token = body.token;
                 justinChang = body.reviewer;
@@ -32,7 +31,6 @@ describe('Reviewers API', () => {
     it('signs up a user', () => {
         assert.isDefined(token);
     });
-    // });
 
     const makeSimple = (reviewer, reviews, film) => {
         const simple = {
@@ -58,86 +56,10 @@ describe('Reviewers API', () => {
         return simple;
     };
 
-    let leoActor;
-    let legendaryStudio;
     let justinChang;
     let inceptionFilm;
     let inceptionReview;
 
-    const justin = {
-        name: 'Justin Chang',
-        company: 'The Hollywood Reporter',
-        email: 'justin@email.com',
-        password:'pwd123'
-    };
-
-    const leo = { 
-        name:'Leonardo DiCaprio',
-        dob: new Date('1980-11-12'),
-        pob: 'Beaverton, OR'
-    };
-
-    const legendary = {
-        name: 'Legendary',
-        address: {
-            city: 'Santa Monica',
-            state: 'CA',
-            country: 'United States'
-        }
-    };
-
-    // describe('Reviewers API', () => {
-
-    
-
-    beforeEach(() => {
-        return request
-            .post('/api/actors')
-            .send(leo)
-            .then(checkOk)
-            .then(({ body }) => leoActor = body);     
-    });
-    
-    beforeEach(() => {
-        return request
-            .post('/api/studios')
-            .send(legendary)
-            .then(checkOk)
-            .then(({ body }) => legendaryStudio = body);
-    });
-    
-    // beforeEach(() => {
-    //     return request
-    //         .post('/api/auth/signup')
-    //         .send(justin)
-    //         .then(checkOk)
-    //         .then (({ body }) => justinChang = body);
-    
-    // });
-    
-    beforeEach(() => {
-        return save('films', {
-            title: 'Inception',
-            studio: legendaryStudio._id,
-            released: 2010,
-            cast: [{
-                role: 'Cobb',
-                actor: leoActor._id
-            }]
-        })
-            .then(data => inceptionFilm = data);
-    });
-
-    beforeEach(() => {
-        return save('reviews', {
-            rating: 5,
-            reviewer: justinChang._id,
-            review: 'It was great',
-            film: inceptionFilm._id,
-            createdAt: new Date()
-        })
-            .then(data => inceptionReview = data);
-    });
 
     it('saves a reviewer', ()=> {
         assert.isOk(justinChang._id);
@@ -152,24 +74,6 @@ describe('Reviewers API', () => {
             });
     });
 
-    // it('gets a list of reviewers', () => {
-    //     let injoong;
-    //     return save('reviewers', {
-    //         name: 'Injoong Yoon',
-    //         company: 'Variety' 
-    //     })
-    //         .then(_injoong => {
-    //             injoong = _injoong;
-    //             return request.get('/api/reviewers');
-    //         })
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, [
-    //                 justinChang, 
-    //                 injoong
-    //             ]);
-    //         });
-    // });
 
     it('gets a list of reviewers', () => {
         return request

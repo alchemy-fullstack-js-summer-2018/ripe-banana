@@ -54,6 +54,12 @@ const netflix = {
 
 describe('Studios API', () => {
 
+    beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('reviews'));
+
     let token;
     beforeEach(() => {
         return request
@@ -71,11 +77,7 @@ describe('Studios API', () => {
             });
     });
 
-    beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('films'));
-    beforeEach(() => dropCollection('reviewers'));
-    beforeEach(() => dropCollection('actors'));
-    beforeEach(() => dropCollection('reviews'));
+    
 
     beforeEach(() => {
         return save('studios', token, warner)
