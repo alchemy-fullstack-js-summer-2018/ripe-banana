@@ -31,7 +31,7 @@ describe('Reviewer Model', () => {
 
     it('validates that all fields are required', () => {
         const reviewer = new Reviewer({});
-        const errors = getErrors(reviewer.validateSync(), 2);
+        const errors = getErrors(reviewer.validateSync(), 4);
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
         assert.equal(errors.email.kind, 'required');
