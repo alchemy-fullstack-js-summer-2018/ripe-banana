@@ -18,15 +18,15 @@ This is a database of movies with reviews, movie studios, actors, reviews, and r
     * `/api/studios/:id` - response will be a studio object with the corresponding id.
 * `/api/actors` - response will be an array of actor objects.
     * `/api/actors/:id` - response will be a actor object with the corresponding id.
-* `/api/reviewers` - response will be an array of reviewer objects.
-    * `/api/reviewers/:id` - response will be a reviewer object with the corresponding id.
+* `/api/users` - response will be an array of user objects.
+    * `/api/users/:id` - response will be a user object with the corresponding id.
 * `/api/reviews` - response will be an array of review objects.
 
 ### Methods:
 * `POST` - will post an object
 * `GET` - will get an array of all objects
-* `GET<id>` - will get an object
-* `PUT<id>` - will update a specified object
+* `GET <id>` - will get an object
+* `PUT <id>` - will update a specified object
     * Only **actors** and **reviewers** can be updated.
-* `DELETE<id>` - will delete a specified object
+* `DELETE <id>` - will delete a specified object
     * However, **studios** and **actors** cannot be deleted if they have **films** attached to them.

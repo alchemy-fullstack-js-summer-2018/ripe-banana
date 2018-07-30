@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const { request, save, checkOk } = require('./request');
 const { dropCollection } = require('./db');
+const { verify } = require('../../lib/util/token-service');
 
 const makeSimple = (actor, films) => {
     const simple = {
@@ -26,6 +27,8 @@ let inceptionFilm;
 let legendaryStudio;
 let kenActor;
 let ellenActor;
+let token;
+let userToken;
 
 const legendary = {
     name: 'Legendary',
@@ -48,31 +51,70 @@ const ellen = {
     pob: 'Gresham, OR'
 };
 
+let bobby = {
+    email: 'bobby@bobby.com',
+    password: 'iambobby',
+    roles: ['admin']
+};
+
+let user = {
+    email: 'bad@bad.com',
+    password: 'iamuser',
+    roles: []
+};
+
 describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('users'));
+
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send(bobby)
+            .then(checkOk)
+            .then(({ body }) => {
+                token = body.token;
+                verify(token)
+                    .then(body => bobby._id = body.id);
+            });
+    });
+
+    beforeEach(() => {
+        return request
+            .post('/api/auth/signup')
+            .send(user)
+            .then(checkOk)
+            .then(({ body }) => {
+                userToken = body.token;
+                verify(userToken)
+                    .then(body => user._id = body.id);
+            });
+    });
 
     beforeEach(() => {
         return request
             .post('/api/studios')
+            .set('Authorization', token)
             .send(legendary)
             .then(checkOk)
             .then(({ body }) => legendaryStudio = body);
     });
 
     beforeEach(() => {
-        return save('actors', ken)
+        return save('actors', ken, token)
             .then(data => kenActor = data);
     });
 
     beforeEach(() => {
-        return save('actors', ellen)
+        return save('actors', ellen, token)
             .then(data => ellenActor = data);
     });
 
     beforeEach(() => {
         return request
             .post('/api/films')
+            .set('Authorization', token)
             .send({
                 title: 'Inception',
                 studio: legendaryStudio._id,
@@ -112,15 +154,28 @@ describe('Actors API', () => {
         kenActor.pob = 'Boston, MA';
         return request
             .put(`/api/actors/${kenActor._id}`)
+            .set('Authorization', token)
             .send(kenActor)
             .then((({ body }) => {
                 assert.deepEqual(body, kenActor);
             }));
     });
 
+    it('doesn\'t update an actor when user is not an admin', () => {
+        kenActor.pob = 'Winchester, MA';
+        return request
+            .put(`/api/actors/${kenActor._id}`)
+            .set('Authorization', userToken)
+            .then(res => {
+                assert.equal(res.status, 403);
+                assert.equal(res.body.error, 'Must be an admin');
+            });
+    });
+
     it('removes an actor by ID', () => {
         return request
             .delete(`/api/actors/${ellenActor._id}`)
+            .set('Authorization', token)
             .then(checkOk)
             .then(() => {
                 return request.get('/api/actors');
@@ -136,7 +191,9 @@ describe('Actors API', () => {
             .get(`/api/actors/${kenActor._id}`)
             .then(checkOk)
             .then(() => {
-                return request.delete(`/api/actors/${kenActor._id}`);
+                return request
+                    .delete(`/api/actors/${kenActor._id}`)
+                    .set('Authorization', token);
             })
             .then(checkOk)
             .then(({ body }) => {
