@@ -20,54 +20,60 @@ describe('Films API', () => {
             .then(({ body }) => body);
     }
 
-    let film; // film
-    let foster; // actor
-    let warner; // studio
-    let reviewerCrocker; // reviewer
+    let film; 
+    let foster; 
+    let warner; 
     let token;
+    beforeEach(() => dropCollection('reviewers'));
     
-    // beforeEach(() => {
-    //     return request
-    //         .post('/api/reviewers/signup')
-    //         .send({
-    //             name: 'lil Debo',
-    //             email: 'lil@email.com',
-    //             company: 'Cat House',
-    //             password: '12345',
-    //             roles: ['admin']
-
-    //         })
-    //         .then(({ body }) => {
-    //             token = body.token;
-    //             reviewer = body.reviewer;
-    //         });
-
-    // })
-    function saveReviewer(reviewer) {
+    beforeEach(() => {
+        return signup(
+            {
+                name: 'Betty Crocker',
+                email: 'crock@email.com',
+                company: 'Pancake Hut',
+                password: 'abc12345',
+                roles: ['admin']
+            })
+            
+            .then(body => {
+                token = body.token;
+            });
+            
+    });
+    function signup(reviewer) {
         return request
-            .post('/api/reviewers')
+            .post('/api/reviewers/signup')
             .send(reviewer)
             .then(checkOk)
             .then(({ body }) => body);
     }
-
-    beforeEach(() => {
-        return saveReviewer({ 
-            name: 'Betty Crocker',
-            email: 'crock@email.com',
-            company: 'Pancake Hut',
-            password: 'abc12345',
-            roles: ['admin']
-        })
-            .then(data => {
-                reviewerCrocker = data;
+        
+        
+    it('signs up and saves a reviewer', () => {
+        assert.isOk(token);
+    });
+        
+    it('can sign in a reviewer', () => {
+        return request
+            .post('/api/reviewers/signin')
+            .send({
+                email: 'crock@email.com',
+                password: 'abc12345'
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isDefined(body.token);
             });
     });
-
-    it('saves a reviewer', () => {
-        assert.isOk(reviewerCrocker._id);
+        
+    it('checks token', () => {
+        return request
+            .get('/api/reviewers/verify')
+            .set('Authorization', token)
+            .then(checkOk);
     });
-
+        
     function saveStudio(studio) {
         return request
             .post('/api/studios')
@@ -75,14 +81,14 @@ describe('Films API', () => {
             .then(checkOk)
             .then(({ body }) => body);
     }
-
+        
     beforeEach(() => {
         return saveStudio({ name: 'Warner Bros.' })
             .then(data => {
                 warner = data;
             });
     });
-    // 
+     
     function saveActor(actor) {
         return request
             .post('/api/actors')
@@ -96,8 +102,8 @@ describe('Films API', () => {
                 foster = data;
             });
     });
-   
-    //
+        
+    
     beforeEach(() => {
         return save({ 
             title: 'Contact',
@@ -112,11 +118,11 @@ describe('Films API', () => {
                 film = data;
             });
     });
-
+        
     it('saves a film', () => {
         assert.isOk(film._id);
     });
-
+        
     const makeSimple = (film, studio) => {
         const simple = {
             _id: film._id,
@@ -131,7 +137,7 @@ describe('Films API', () => {
         }
         return simple;
     };
-
+        
     it('gets all films', () => {
         let myMovie;
         return save({
@@ -155,7 +161,7 @@ describe('Films API', () => {
                 ]);
             });
     });
-   
+        
     it('gets a film by id', () => {
         return request
             .get(`/api/films/${film._id}`)
@@ -178,8 +184,9 @@ describe('Films API', () => {
                         }
                     }],
                     reviews: []
-
+                    
                 });
             });
     });
 });
+    
